@@ -1,6 +1,6 @@
 phase: E02b
 status: pre_registered
-pre_registered_at_utc: "2026-08-07T12:34:21Z"
+pre_registered_at_utc: "2026-08-07T12:50:39Z"
 claim: controlled generator-source fingerprint confirmation; not G-FITS calibration
 
 governance:
@@ -72,6 +72,7 @@ design:
     calibration: [31415926]
     test: [16180339]
   generate_complete_prompt_seed_factorial: true
+  generation_batch_size: 1
   resolutions: [256, 512, 768, 1024]
   writer:
     id: canonical_png_v1

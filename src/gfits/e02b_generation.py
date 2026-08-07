@@ -285,10 +285,11 @@ def generate_e02b_shard(
     if int(resolution) not in config["design"]["resolutions"]:
         raise ValueError(f"unregistered E02b resolution: {resolution}")
     model = config["models"][model_id]
-    if model["adapter"] == "kandinsky22" and batch_size != 1:
-        raise ValueError("Kandinsky formal generation must use batch_size=1")
-    if batch_size <= 0:
-        raise ValueError("batch_size must be positive")
+    registered_batch_size = int(config["design"]["generation_batch_size"])
+    if batch_size != registered_batch_size:
+        raise ValueError(
+            f"formal generation batch_size must be {registered_batch_size}, got {batch_size}"
+        )
     repositories = _download_repositories(model, cache_root.resolve())
     model_hash = _combined_hash(repositories, "inventory")
     component_rows = []
@@ -361,6 +362,7 @@ def generate_e02b_shard(
             "repository_state": repository_state_dict(state),
             "repositories": repositories,
             "runtime": _runtime_metadata(device),
+            "generation_batch_size": registered_batch_size,
             "elapsed_seconds": time.time() - started,
             "records": [complete[key] for key in sorted(complete)],
         }

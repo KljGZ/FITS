@@ -98,6 +98,8 @@ def load_e02b_config(path: Path) -> dict[str, Any]:
     resolutions = [int(value) for value in _require(design, "resolutions")]
     if resolutions != [256, 512, 768, 1024]:
         raise ValueError("E02b resolutions must remain the registered 256/512/768/1024 grid")
+    if int(design.get("generation_batch_size", 0)) != 1:
+        raise ValueError("E02b generation batch size must remain one for sample isolation")
     groups = _require(payload, "model_groups")
     if set(groups) != {"cross_family", "near_family"}:
         raise ValueError("E02b needs independent cross_family and near_family suites")

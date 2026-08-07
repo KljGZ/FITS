@@ -69,6 +69,7 @@ def test_e02b_full_factorial_and_split_isolation() -> None:
     assert not seed_splits["calibration"] & seed_splits["test"]
     assert {row["native_resolution"] for row in plan} == {256, 512, 768, 1024}
     assert set(config["model_groups"]) == {"cross_family", "near_family"}
+    assert config["design"]["generation_batch_size"] == 1
 
 
 def test_model_snapshot_policy_avoids_duplicate_weight_formats() -> None:
