@@ -1,0 +1,113 @@
+{
+  "schema": "gfits.e00-synthetic-validation/v1",
+  "phase": "E00",
+  "profile": "gate",
+  "passed": true,
+  "generated_at_utc": "2026-08-07T06:39:29.100530Z",
+  "seed": 20260808,
+  "configuration": "C:\\Users\\AliceBob\\Desktop\\FIFS4AIGC\\code\\configs\\e00.yaml",
+  "configuration_sha256": "8f1f7cb0f9ee6824c76ffde8d0f159ee5919ea4c71dbb4db8b2f9d85a22a8088",
+  "source_sha256": {
+    "src/gfits/matching.py": "7e5f03e764e0a54e8ac0ed75317749592f6911b5928c764b462b2b31277e56f8",
+    "src/gfits/synthetic.py": "c6d44fc2fa15c311403dcb575074361a8e26169ab01aa73ee4654c4d4ab143c1",
+    "configs/e00.yaml": "8f1f7cb0f9ee6824c76ffde8d0f159ee5919ea4c71dbb4db8b2f9d85a22a8088"
+  },
+  "git": {
+    "base_commit": "28df6e5b3c61c8efac3a91d58fa511f9b92d25bb",
+    "tracked_worktree_dirty": true
+  },
+  "definitions": {
+    "cc": "sum((x - mean(x)) * (y - mean(y)))",
+    "ncc": "cc / (l2(x - mean(x)) * l2(y - mean(y)))",
+    "signed_pce": "sign(peak) * peak^2 / mean(correlation_floor_excluding_neighborhood^2)",
+    "fits": "candidate_score / single_same_pipeline_different_source_control_score",
+    "fits_plus": "candidate_score / median(multiple_same_pipeline_different_source_control_scores)",
+    "log_ratio": "log(candidate_score) - log(median_control_score)",
+    "terminology_note": "FITS+ is a G-FITS project extension, not a name attributed to the CCS 2023 paper."
+  },
+  "gate_thresholds": {
+    "h0_fits_plus_median_interval": [
+      0.9,
+      1.1
+    ],
+    "h1_fits_plus_median_min": 1.15,
+    "variance_final_to_initial_max": 0.55,
+    "variance_log_slope_max": -0.15
+  },
+  "gate_summary": {
+    "passed": true,
+    "models": {
+      "additive": {
+        "h0_fits_plus_median": 1.0003808217057286,
+        "h1_fits_plus_median": 1.3165153601253115,
+        "h0_log_ratio_median": 0.00038074779831531735,
+        "h1_log_ratio_median": 0.27498836655606124,
+        "log_ratio_variance_by_nz": {
+          "1": 0.0009078694146716602,
+          "3": 0.0003503410946672625,
+          "9": 0.00013321243845227957,
+          "27": 5.292808511440502e-05
+        },
+        "variance_final_to_initial": 0.058299227024347956,
+        "variance_log_slope": -0.8641320993228917,
+        "checks": {
+          "h0_centered_near_one": true,
+          "h1_above_minimum": true,
+          "h1_above_h0": true,
+          "variance_final_to_initial": true,
+          "variance_log_slope": true
+        },
+        "passed": true
+      },
+      "multiplicative": {
+        "h0_fits_plus_median": 0.99728696912897,
+        "h1_fits_plus_median": 1.5110043128729234,
+        "h0_log_ratio_median": -0.0027167312365604657,
+        "h1_log_ratio_median": 0.41277452572533246,
+        "log_ratio_variance_by_nz": {
+          "1": 0.00153696698392053,
+          "3": 0.0008586604237080505,
+          "9": 0.00034713693306335575,
+          "27": 0.00012684742266445785
+        },
+        "variance_final_to_initial": 0.0825310003347584,
+        "variance_log_slope": -0.7636359229202194,
+        "checks": {
+          "h0_centered_near_one": true,
+          "h1_above_minimum": true,
+          "h1_above_h0": true,
+          "variance_final_to_initial": true,
+          "variance_log_slope": true
+        },
+        "passed": true
+      },
+      "nonadditive": {
+        "h0_fits_plus_median": 1.0017973331646512,
+        "h1_fits_plus_median": 1.3552152224465903,
+        "h0_log_ratio_median": 0.0017957109131355176,
+        "h1_log_ratio_median": 0.3039602772280849,
+        "log_ratio_variance_by_nz": {
+          "1": 0.0023544840845057067,
+          "3": 0.0011503830670479272,
+          "9": 0.00045433150165617996,
+          "27": 0.00013363677083525461
+        },
+        "variance_final_to_initial": 0.05675840907767695,
+        "variance_log_slope": -0.8679929782904987,
+        "checks": {
+          "h0_centered_near_one": true,
+          "h1_above_minimum": true,
+          "h1_above_h0": true,
+          "variance_final_to_initial": true,
+          "variance_log_slope": true
+        },
+        "passed": true
+      }
+    }
+  },
+  "artifacts": {
+    "synthetic_scores.csv": "b01e976982be25171eb2db0a7ccd28da771e32c39168a49eb67e2b7b9b904c7e",
+    "variance_by_nz.csv": "909a181b7e47d58d5806cc6c8064c94801bd11594c72095b26e87abaf8ad4298",
+    "diagnostics.png": "66611790ba7393829b4c6b2d09b0286b49b9f752efcc014c5ef1ae7597372474"
+  }
+}

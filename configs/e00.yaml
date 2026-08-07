@@ -1,0 +1,40 @@
+phase: E00
+status: pre_registered
+pre_registered_at_utc: "2026-08-07T06:23:00Z"
+purpose: residual-level numerical and mechanism validation only
+
+definitions:
+  cc: sum((x - mean(x)) * (y - mean(y)))
+  ncc: cc / (l2(x - mean(x)) * l2(y - mean(y)))
+  signed_pce: sign(peak) * peak^2 / mean(correlation_floor_excluding_neighborhood^2)
+  fits: candidate_score / single_same_pipeline_different_source_control_score
+  fits_plus: candidate_score / median(multiple_same_pipeline_different_source_control_scores)
+  log_ratio: log(candidate_score) - log(median_control_score)
+  terminology_note: FITS+ is a G-FITS project extension, not a name attributed to the CCS 2023 paper.
+
+synthetic:
+  models:
+    - additive
+    - multiplicative
+    - nonadditive
+  development_seed: 20260807
+  gate_seed: 20260808
+  shape: [32, 32]
+  source_count: 64
+  hypothesis_trials: 300
+  hypothesis_controls_nz: 9
+  variance_replicates: 300
+  variance_nz_values: [1, 3, 9, 27]
+  reference_samples: 8
+  gamma: 0.45
+  beta: 0.80
+  noise_std: 0.85
+  stabilizer: 0.0
+
+gate:
+  h0_fits_plus_median_interval: [0.90, 1.10]
+  h1_fits_plus_median_min: 1.15
+  variance_final_to_initial_max: 0.55
+  variance_log_slope_max: -0.15
+
+stop_rule: Any failed model-level check fails E00 and blocks E01.

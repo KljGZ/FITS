@@ -10,12 +10,14 @@ from pathlib import Path
 
 from gfits import __version__
 from gfits.manifest import ManifestError, build_manifest, verify_manifest
+from gfits.prnu_validation import validate_prnu
+from gfits.synthetic import validate_synthetic_fits
 
 
 def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="gfits",
-        description="G-FITS reproducible research utilities (Phase 0)",
+        description="G-FITS reproducible research utilities (Phase 0 and E00)",
     )
     parser.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
     commands = parser.add_subparsers(dest="command", required=True)
@@ -43,11 +45,30 @@ def _parser() -> argparse.ArgumentParser:
         action="store_true",
         help="also fail on included files absent from the manifest",
     )
+
+    prnu = commands.add_parser(
+        "validate-prnu",
+        help="cross-validate CC and legacy signed PCE against locked prnu-python",
+    )
+    prnu.add_argument("--upstream-root", type=Path, required=True)
+    prnu.add_argument("--output", type=Path, required=True)
+
+    synthetic = commands.add_parser(
+        "validate-synthetic-fits",
+        help="run the pre-registered E00 residual-level synthetic gate",
+    )
+    synthetic.add_argument("--config", type=Path, required=True)
+    synthetic.add_argument("--output-dir", type=Path, required=True)
+    synthetic.add_argument(
+        "--profile",
+        choices=("development", "gate"),
+        default="gate",
+    )
     return parser
 
 
 def main(argv: Sequence[str] | None = None) -> int:
-    """Run the Phase 0 CLI and return a process exit code."""
+    """Run a completed-phase CLI command and return a process exit code."""
 
     arguments = _parser().parse_args(argv)
     try:
@@ -59,16 +80,25 @@ def main(argv: Sequence[str] | None = None) -> int:
                 "manifest": str(arguments.output.resolve()),
                 "record_count": manifest["record_count"],
             }
-        else:
+        elif arguments.command == "verify-manifest":
             verification = verify_manifest(
                 arguments.manifest,
                 arguments.root,
                 strict=arguments.strict,
             )
             result = verification.as_dict()
+        elif arguments.command == "validate-prnu":
+            result = validate_prnu(arguments.upstream_root, arguments.output)
+        else:
+            result = validate_synthetic_fits(
+                arguments.config,
+                arguments.output_dir,
+                profile=arguments.profile,
+            )
         print(json.dumps(result, ensure_ascii=False, indent=2))
-        return 0 if result["ok"] else 1
-    except (ManifestError, OSError) as error:
+        succeeded = bool(result.get("ok", result.get("passed", False)))
+        return 0 if succeeded else 1
+    except (ImportError, ManifestError, OSError, RuntimeError, ValueError) as error:
         print(json.dumps({"ok": False, "error": str(error)}, ensure_ascii=False), file=sys.stderr)
         return 2
 

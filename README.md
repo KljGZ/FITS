@@ -5,10 +5,11 @@ AIGC Attribution) is a reproducible digital-image-forensics research project.
 The intended research question is whether a candidate generator fingerprint can
 be calibrated against correlation shared by downstream software pipelines.
 
-Phase 0 is the only completed phase. It provides repository structure, quality
-gates, immutable third-party revision records, literature/code audits, and a
-byte-level dataset manifest. It does **not** contain a detector or claim an
-experimental result.
+Phase 0 provides repository structure, quality gates, immutable third-party
+revision records, literature/code audits, and a byte-level dataset manifest.
+Phase E00 adds numerical matching primitives and a pre-registered synthetic
+mechanism gate. E00 is residual-level evidence only: it is **not** a detector,
+a real-image experiment, or an AIGC performance claim.
 
 ## Environment
 
@@ -32,7 +33,7 @@ ruff format --check .
 pytest
 ```
 
-## Phase 0 CLI
+## Phase 0 and E00 CLI
 
 The manifest records the raw bytes of supported image files. Building or
 verifying a manifest never decodes, resizes, crops, recompresses, or changes an
@@ -54,6 +55,25 @@ Use repeated `--include` arguments to override the default image globs, or
 also fails on files that are present under the root but absent from the
 manifest.
 
+E00 implements zero-mean CC/NCC, signed PCE, the single-control FITS division,
+and a project-defined multi-control median extension named FITS+. The locked
+`prnu-python` checkout is used only for numerical compatibility checks; its
+source is never modified.
+
+```bash
+python -m gfits.cli validate-prnu \
+  --upstream-root third_party/prnu-python \
+  --output artifacts/e00/prnu-cross-validation.json
+
+python -m gfits.cli validate-synthetic-fits \
+  --config configs/e00.yaml \
+  --output-dir artifacts/e00 \
+  --profile gate
+```
+
+The exact E00 gate seed and thresholds were frozen in `configs/e00.yaml` before
+the gate run. A failed model-level check blocks E01.
+
 ## Repository layout
 
 ```text
@@ -63,12 +83,15 @@ tests/                 Unit and CLI tests
 third_party/LOCK.json  Audited upstream revisions; no vendored source
 reports/phase0/        Literature, repository, and gate reports
 artifacts/phase0/      Machine-generated Phase 0 validation evidence
+reports/e00/           E00 definitions, results, and limitations
+artifacts/e00/         Raw E00 CSV, JSON, and diagnostic figure
 ```
 
 The Phase 0 source audit is in
 [`reports/phase0/LITERATURE_MATRIX.md`](reports/phase0/LITERATURE_MATRIX.md) and
 [`reports/phase0/CODE_REPOSITORY_AUDIT.md`](reports/phase0/CODE_REPOSITORY_AUDIT.md).
 The exact external revisions are in [`third_party/LOCK.json`](third_party/LOCK.json).
+The E00 result and interpretation are in [`reports/e00/E00_REPORT.md`](reports/e00/E00_REPORT.md).
 
 ## Remote storage
 

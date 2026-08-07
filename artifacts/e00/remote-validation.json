@@ -1,0 +1,50 @@
+{
+  "schema": "gfits.e00-remote-validation/v1",
+  "phase": "E00",
+  "generated_at_utc": "2026-08-07T06:37:01Z",
+  "passed": true,
+  "runner": {
+    "host": "user-SYS-4029GP-TRTC-EC028B",
+    "conda_environment": "fits-aigc",
+    "python": "3.10.20",
+    "numpy": "1.26.4",
+    "torch": "2.5.1+cu124",
+    "cuda": "12.4",
+    "gpu_count": 8,
+    "gpu_model": "NVIDIA GeForce RTX 4090",
+    "driver": "550.78"
+  },
+  "quality_gates": {
+    "ruff_check": "passed",
+    "ruff_format_check": "passed",
+    "pytest": {
+      "passed": 18,
+      "failed": 0,
+      "junit": "artifacts/e00/pytest-junit.xml"
+    }
+  },
+  "prnu_cross_validation": {
+    "passed": true,
+    "repository": "https://github.com/polimi-ispl/prnu-python",
+    "commit": "91e1585a39287e26f9e770b71cf9124c35d9248d",
+    "correlation_cases": 4,
+    "maximum_correlation_map_absolute_error": 3.814697265625e-06,
+    "pce_cases": 4,
+    "maximum_pce_value_error": 0.0,
+    "maximum_pce_floor_energy_error": 0.0
+  },
+  "synthetic_reproduction": {
+    "passed": true,
+    "seed": 20260808,
+    "row_count_local": 1800,
+    "row_count_remote": 1800,
+    "discrete_fields_identical": true,
+    "maximum_absolute_row_value_delta": 1.1102230246251565e-15,
+    "variance_row_count_local": 3600,
+    "variance_row_count_remote": 3600,
+    "maximum_absolute_variance_row_value_delta": 6.661338147750939e-16,
+    "summary_metric_count": 30,
+    "maximum_absolute_summary_metric_delta": 1.3322676295501878e-15,
+    "note": "CSV byte hashes differ across Windows/Linux because decimal serialization preserves platform-level floating-point differences; values reproduce within 1.4e-15."
+  }
+}

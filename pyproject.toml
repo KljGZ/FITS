@@ -8,7 +8,11 @@ version = "0.1.0"
 description = "Reproducible infrastructure for software-noise-calibrated generator attribution"
 readme = "README.md"
 requires-python = ">=3.10,<3.13"
-dependencies = []
+dependencies = [
+  "matplotlib==3.9.2",
+  "numpy==1.26.4",
+  "PyYAML==6.0.2",
+]
 
 [project.optional-dependencies]
 dev = [

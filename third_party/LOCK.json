@@ -211,6 +211,17 @@
       "fork": false,
       "license_spdx": "NOASSERTION",
       "license_file": null
+    },
+    {
+      "name": "FITS-Matching/FITS-Matching.github.io",
+      "url": "https://github.com/FITS-Matching/FITS-Matching.github.io",
+      "role": "CCS 2023 FITS formula supplement",
+      "default_branch": "master",
+      "commit": "80ecd4fa177efd1da2296149b302b8ea9f2912fc",
+      "archived": false,
+      "fork": false,
+      "license_spdx": "CC0-1.0",
+      "license_file": "LICENSE"
     }
   ]
 }

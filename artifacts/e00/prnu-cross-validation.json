@@ -1,0 +1,116 @@
+{
+  "schema": "gfits.e00-prnu-cross-validation/v1",
+  "phase": "E00",
+  "generated_at_utc": "2026-08-07T06:34:47.666131Z",
+  "passed": true,
+  "upstream": {
+    "repository": "https://github.com/polimi-ispl/prnu-python",
+    "commit": "91e1585a39287e26f9e770b71cf9124c35d9248d",
+    "functions_sha256": "9c26c0c854283145218950c7a63f04ef894b7c1b735bb18249ac42d74408b45f"
+  },
+  "conventions": {
+    "cross_correlation": "zero-center, zero-pad to maximum shape, FFT with 180-degree rotation",
+    "pce_compatibility": "upstream half-open peak slice and zero-filled full-map floor energy",
+    "primary_pce_difference": "G-FITS primary PCE uses an inclusive circular exclusion and mn-|N| floor mean"
+  },
+  "cross_correlation_cases": [
+    {
+      "case": 0,
+      "first_shape": [
+        17,
+        19
+      ],
+      "second_shape": [
+        17,
+        19
+      ],
+      "max_abs_error": 3.814697265625e-06,
+      "mean_abs_error": 5.106992396776891e-07,
+      "passed": true
+    },
+    {
+      "case": 1,
+      "first_shape": [
+        23,
+        15
+      ],
+      "second_shape": [
+        19,
+        13
+      ],
+      "max_abs_error": 3.814697265625e-06,
+      "mean_abs_error": 4.937899285468502e-07,
+      "passed": true
+    },
+    {
+      "case": 2,
+      "first_shape": [
+        16,
+        21
+      ],
+      "second_shape": [
+        12,
+        21
+      ],
+      "max_abs_error": 3.814697265625e-06,
+      "mean_abs_error": 5.443916528574413e-07,
+      "passed": true
+    },
+    {
+      "case": 3,
+      "first_shape": [
+        31,
+        18
+      ],
+      "second_shape": [
+        31,
+        14
+      ],
+      "max_abs_error": 3.814697265625e-06,
+      "mean_abs_error": 5.560846979259163e-07,
+      "passed": true
+    }
+  ],
+  "pce_cases": [
+    {
+      "case": 0,
+      "peak": [
+        8,
+        9
+      ],
+      "value_error": 0.0,
+      "floor_energy_error": 0.0,
+      "passed": true
+    },
+    {
+      "case": 1,
+      "peak": [
+        12,
+        14
+      ],
+      "value_error": 0.0,
+      "floor_energy_error": 0.0,
+      "passed": true
+    },
+    {
+      "case": 2,
+      "peak": [
+        17,
+        7
+      ],
+      "value_error": 0.0,
+      "floor_energy_error": 0.0,
+      "passed": true
+    },
+    {
+      "case": 3,
+      "peak": [
+        20,
+        20
+      ],
+      "value_error": 0.0,
+      "floor_energy_error": 0.0,
+      "passed": true
+    }
+  ]
+}
