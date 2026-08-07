@@ -37,6 +37,16 @@ conda activate fits-aigc
 python -m pip install -e .
 ```
 
+The controlled E02b generation stage uses its separate `fits-e02b`
+environment. Its PyTorch 2.6.0/CUDA 12.4 wheel is intentionally newer than the
+base analysis environment because Transformers blocks unsafe `.bin` loading on
+older PyTorch releases after CVE-2025-32434.
+
+```bash
+conda env create -f environment-e02b.yml
+conda activate fits-e02b
+```
+
 For development and validation:
 
 ```bash
