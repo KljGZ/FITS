@@ -1,9 +1,12 @@
 # Python and notebooks
 __pycache__/
 *.py[cod]
+*.egg-info/
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
+.coverage
+htmlcov/
 .ipynb_checkpoints/
 
 # Local environments and editor state
@@ -37,7 +40,11 @@ wandb/
 *.h5
 *.hdf5
 
+# Third-party source is fetched from immutable revisions and never vendored
+third_party/*/
+!third_party/README.md
+!third_party/LOCK.json
+
 # OS-generated files
 .DS_Store
 Thumbs.db
-

@@ -1,0 +1,216 @@
+{
+  "schema": "gfits.third-party-lock/v1",
+  "audited_at_utc": "2026-08-06T00:00:00Z",
+  "policy": "Exact revisions only; adapter or recorded patch; no in-place upstream edits.",
+  "repositories": [
+    {
+      "name": "polimi-ispl/prnu-python",
+      "url": "https://github.com/polimi-ispl/prnu-python",
+      "role": "PRNU/PCE reference implementation",
+      "default_branch": "master",
+      "commit": "91e1585a39287e26f9e770b71cf9124c35d9248d",
+      "archived": false,
+      "fork": false,
+      "license_spdx": "MIT",
+      "license_file": "LICENSE.md"
+    },
+    {
+      "name": "janbutora/prnu-python",
+      "url": "https://github.com/janbutora/prnu-python",
+      "role": "Adobe-pattern removal PRNU fork",
+      "default_branch": "main",
+      "commit": "645b418154d30b6d3ff7485ea191d424ac389ace",
+      "archived": false,
+      "fork": false,
+      "license_spdx": "MIT",
+      "license_file": "LICENSE.md"
+    },
+    {
+      "name": "janbutora/adobe-detector",
+      "url": "https://github.com/janbutora/adobe-detector",
+      "role": "Adobe periodic-pattern detector",
+      "default_branch": "main",
+      "commit": "4474031b14817ee6032d347e128919c9bb517226",
+      "archived": false,
+      "fork": false,
+      "license_spdx": "MIT",
+      "license_file": "LICENSE.md"
+    },
+    {
+      "name": "grip-unina/noiseprint",
+      "url": "https://github.com/grip-unina/noiseprint",
+      "role": "camera-model residual baseline",
+      "default_branch": "master",
+      "commit": "c06034eedc9235b642a4da9ea8ef25901d6add93",
+      "archived": false,
+      "fork": false,
+      "license_spdx": "NOASSERTION",
+      "license_file": "LICENSE.txt"
+    },
+    {
+      "name": "ningyu1991/GANFingerprints",
+      "url": "https://github.com/ningyu1991/GANFingerprints",
+      "role": "learned GAN attribution baseline",
+      "default_branch": "master",
+      "commit": "5a280e0e6c28cee6b40f291721bbbaa2befe935f",
+      "archived": false,
+      "fork": false,
+      "license_spdx": "NOASSERTION",
+      "license_file": "LICENSE"
+    },
+    {
+      "name": "grip-unina/DMimageDetection",
+      "url": "https://github.com/grip-unina/DMimageDetection",
+      "role": "diffusion residual/frequency study and dataset",
+      "default_branch": "main",
+      "commit": "745ad9e1eee82bdac4aab6e1e7e7dbf20753633a",
+      "archived": false,
+      "fork": false,
+      "license_spdx": "Apache-2.0",
+      "license_file": "LICENSE"
+    },
+    {
+      "name": "hongsong-wang/LIDA",
+      "url": "https://github.com/hongsong-wang/LIDA",
+      "role": "model-agnostic attribution baseline",
+      "default_branch": "main",
+      "commit": "fefbcaecb4ded4b6ec653ad10cfc36441716d33d",
+      "archived": false,
+      "fork": false,
+      "license_spdx": "Apache-2.0",
+      "license_file": "LICENSE"
+    },
+    {
+      "name": "jumpycat/GenSign",
+      "url": "https://github.com/jumpycat/GenSign",
+      "role": "generative-signature detector baseline",
+      "default_branch": "main",
+      "commit": "0d2953d68982b2832f9d55208cb8ecfad5ae0e4e",
+      "archived": false,
+      "fork": false,
+      "license_spdx": "MIT",
+      "license_file": "LICENSE"
+    },
+    {
+      "name": "GenImage-Dataset/GenImage",
+      "url": "https://github.com/GenImage-Dataset/GenImage",
+      "role": "million-scale detection benchmark",
+      "default_branch": "main",
+      "commit": "746781bfa446619e1a4629726eb98d5e69c18240",
+      "archived": false,
+      "fork": true,
+      "license_spdx": "NOASSERTION",
+      "license_file": "License"
+    },
+    {
+      "name": "WisconsinAIVision/UniversalFakeDetect",
+      "url": "https://github.com/WisconsinAIVision/UniversalFakeDetect",
+      "role": "CLIP universal detector baseline",
+      "default_branch": "main",
+      "commit": "76a0e3e60a8a06458707a625d269ba815a2e5919",
+      "archived": false,
+      "fork": false,
+      "license_spdx": "MIT",
+      "license_file": "LICENSE"
+    },
+    {
+      "name": "ZhendongWang6/DIRE",
+      "url": "https://github.com/ZhendongWang6/DIRE",
+      "role": "diffusion reconstruction-error baseline",
+      "default_branch": "main",
+      "commit": "1f89fff15f0e478307cdea9abdfe06a52fe7838a",
+      "archived": true,
+      "fork": false,
+      "license_spdx": "NOASSERTION",
+      "license_file": null
+    },
+    {
+      "name": "chuangchuangtan/NPR-DeepfakeDetection",
+      "url": "https://github.com/chuangchuangtan/NPR-DeepfakeDetection",
+      "role": "upsampling-artifact detector baseline",
+      "default_branch": "main",
+      "commit": "781ced3f7ca2cdc69ec9dd4ef27e8d0b3c07752a",
+      "archived": false,
+      "fork": false,
+      "license_spdx": "NOASSERTION",
+      "license_file": null
+    },
+    {
+      "name": "jonasricker/aeroblade",
+      "url": "https://github.com/jonasricker/aeroblade",
+      "role": "training-free autoencoder reconstruction baseline",
+      "default_branch": "main",
+      "commit": "50fc2b22c929fdc481757adc4bc81bf98d36f9fc",
+      "archived": false,
+      "fork": false,
+      "license_spdx": "NOASSERTION",
+      "license_file": null
+    },
+    {
+      "name": "beibuwandeluori/DRCT",
+      "url": "https://github.com/beibuwandeluori/DRCT",
+      "role": "reconstruction contrastive detector baseline",
+      "default_branch": "main",
+      "commit": "01aa7d0b6de903cf3208801f8f6b469edffbc762",
+      "archived": false,
+      "fork": false,
+      "license_spdx": "NOASSERTION",
+      "license_file": null
+    },
+    {
+      "name": "shilinyan99/AIDE",
+      "url": "https://github.com/shilinyan99/AIDE",
+      "role": "AIGC detection sanity-check baseline",
+      "default_branch": "main",
+      "commit": "6725b710d5c437ab2f59792908ce0377dfc907de",
+      "archived": false,
+      "fork": false,
+      "license_spdx": "MIT",
+      "license_file": "LICENSE"
+    },
+    {
+      "name": "grip-unina/B-Free",
+      "url": "https://github.com/grip-unina/B-Free",
+      "role": "bias-controlled detector baseline",
+      "default_branch": "main",
+      "commit": "c6a9f898782fb466b29af01f21960b67415afb0e",
+      "archived": false,
+      "fork": false,
+      "license_spdx": "NOASSERTION",
+      "license_file": "LICENSE.txt"
+    },
+    {
+      "name": "ductai199x/Forensic-Self-Descriptions-CVPR25",
+      "url": "https://github.com/ductai199x/Forensic-Self-Descriptions-CVPR25",
+      "role": "one-class/open-set forensic baseline",
+      "default_branch": "main",
+      "commit": "50f2eae06efdac2e5a33f407ca9a27a2295133ac",
+      "archived": false,
+      "fork": false,
+      "license_spdx": "NOASSERTION",
+      "license_file": "LICENSE"
+    },
+    {
+      "name": "Ekko-zn/SDAIE",
+      "url": "https://github.com/Ekko-zn/SDAIE",
+      "role": "camera-metadata self-supervised one-class baseline",
+      "default_branch": "main",
+      "commit": "532f0fe3773e591b73d5c28924a579707f789cc4",
+      "archived": false,
+      "fork": false,
+      "license_spdx": "NOASSERTION",
+      "license_file": null
+    },
+    {
+      "name": "Ekko-zn/AIGCDetectBenchmark",
+      "url": "https://github.com/Ekko-zn/AIGCDetectBenchmark",
+      "role": "multi-method detection benchmark harness",
+      "default_branch": "main",
+      "commit": "795ba629d645679b15f3dd4e514695784b297cc1",
+      "archived": false,
+      "fork": false,
+      "license_spdx": "NOASSERTION",
+      "license_file": null
+    }
+  ]
+}

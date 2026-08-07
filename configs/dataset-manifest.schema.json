@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/gfits/dataset-manifest.schema.json",
+  "title": "G-FITS byte-level dataset manifest",
+  "type": "object",
+  "required": [
+    "schema",
+    "hash_algorithm",
+    "generated_at_utc",
+    "source_root",
+    "include_patterns",
+    "record_count",
+    "records"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema": { "const": "gfits.dataset-manifest/v1" },
+    "hash_algorithm": { "const": "sha256" },
+    "generated_at_utc": { "type": "string", "format": "date-time" },
+    "source_root": { "type": "string", "minLength": 1 },
+    "include_patterns": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "record_count": { "type": "integer", "minimum": 0 },
+    "records": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["sample_id", "relative_path", "size_bytes", "sha256"],
+        "properties": {
+          "sample_id": { "type": "string", "minLength": 1 },
+          "relative_path": { "type": "string", "minLength": 1 },
+          "size_bytes": { "type": "integer", "minimum": 0 },
+          "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+        }
+      }
+    }
+  }
+}

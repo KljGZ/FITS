@@ -1,0 +1,44 @@
+{
+  "schema": "gfits.phase-validation/v1",
+  "phase": "0",
+  "gate": "PASS",
+  "validated_at_utc": "2026-08-07T05:04:39Z",
+  "validated_source_git_tree": "f8281374aaaee7cfcb198813d3e6d1ae2a5d0436",
+  "phase_config": "configs/phase0.yaml",
+  "random_seed": 20260806,
+  "environment": {
+    "host": "user-SYS-4029GP-TRTC-EC028B",
+    "platform": "Linux-5.15.0-140-generic-x86_64-with-glibc2.31",
+    "python": "3.10.20",
+    "pytorch": "2.5.1+cu124",
+    "cuda_runtime": "12.4",
+    "cuda_available": true,
+    "gpu_0": "NVIDIA GeForce RTX 4090"
+  },
+  "checks": {
+    "package_install": "PASS",
+    "ruff_check": "PASS",
+    "ruff_format_check": "PASS",
+    "pytest": {
+      "status": "PASS",
+      "passed": 9,
+      "failed": 0,
+      "duration_seconds": 0.19,
+      "junit_sha256": "46614eba7352b6bc4c1676ba127b0897f5ab96ca9d61eafe51839145da61ac37"
+    },
+    "manifest_smoke": {
+      "status": "PASS",
+      "built_records": 1,
+      "verified_records": 1,
+      "issues": 0,
+      "unexpected_paths": 0
+    },
+    "third_party_lock": {
+      "status": "PASS",
+      "checked": 19,
+      "default_branch_head_mismatches": 0
+    }
+  },
+  "scientific_results": null,
+  "note": "Phase 0 is infrastructure-only; no detector or hypothesis metric was evaluated."
+}

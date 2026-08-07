@@ -1,0 +1,23 @@
+phase: 0
+status: implemented
+random_seed: 20260806
+manifest:
+  schema: gfits.dataset-manifest/v1
+  hash_algorithm: sha256
+  default_include_patterns:
+    - "*.bmp"
+    - "*.dng"
+    - "*.gif"
+    - "*.heic"
+    - "*.heif"
+    - "*.jpeg"
+    - "*.jpg"
+    - "*.png"
+    - "*.tif"
+    - "*.tiff"
+    - "*.webp"
+quality_gate:
+  require_pytest: true
+  require_ruff_check: true
+  require_ruff_format: true
+  required_third_party_locks: 19
