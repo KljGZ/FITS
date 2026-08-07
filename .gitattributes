@@ -1,0 +1,5 @@
+# Preserve machine-generated evidence byte-for-byte so recorded SHA-256 values
+# remain valid on Windows and Linux checkouts.
+/artifacts/e01/** -text
+/artifacts/e01/*.csv -diff
+/artifacts/e01/pytest-junit.xml -diff

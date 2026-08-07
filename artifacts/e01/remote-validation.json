@@ -1,0 +1,51 @@
+{
+  "schema": "gfits.remote-validation/v1",
+  "phase": "E01",
+  "generated_at_utc": "2026-08-07T07:38:21.9640640Z",
+  "repository_base_commit": "7e24c3dffbcd9401fa1db14f51a1a3af16c95eba",
+  "configuration_sha256": "595ac3655d25a16c647e7338063604ae8a6a325ab5fa11eb2f1f52c111400b6a",
+  "manifest_sha256": "e0d31c77d0316b6cb661974b78b91687685db802bd36fa61a296b1317977ddbd",
+  "upstream_prnu_commit": "91e1585a39287e26f9e770b71cf9124c35d9248d",
+  "platform": "Linux-5.15.0-140-generic-x86_64-with-glibc2.31",
+  "python": "3.10.20",
+  "packages": {
+    "numpy": "1.26.4",
+    "Pillow": "11.0.0",
+    "PyWavelets": "1.7.0",
+    "scipy": "1.14.1",
+    "scikit-image": "0.24.0",
+    "scikit-learn": "1.5.2"
+  },
+  "hardware_observed": {
+    "gpu_count": 8,
+    "gpu_model": "NVIDIA GeForce RTX 4090",
+    "driver": "550.78",
+    "e01_compute_path": "CPU"
+  },
+  "persistent_storage": {
+    "dataset": "/mnt/data/jkl/FITS/datasets/vision-e01",
+    "dataset_size": "329M",
+    "fingerprint_cache": "/mnt/data/jkl/FITS/cache/e01",
+    "fingerprint_cache_size": "258M",
+    "output": "/mnt/data/jkl/FITS/outputs/e01/gate",
+    "output_size_before_junit": "1.1M"
+  },
+  "quality_gate": {
+    "ruff_check": "passed",
+    "ruff_format_check": "passed",
+    "pytest": {
+      "passed": 23,
+      "failed": 0,
+      "duration_seconds": 3.43,
+      "junit_sha256": "4c599c64fce6d6b91e0272449e98033e3e27b49a8a18978047291ac93d2ee79b"
+    }
+  },
+  "experiment": {
+    "completion_gate": "passed",
+    "mechanism_hypothesis": "passed",
+    "score_rows": 1500,
+    "fingerprint_rows": 20,
+    "threshold_evaluations": 16,
+    "image_files": 400
+  }
+}

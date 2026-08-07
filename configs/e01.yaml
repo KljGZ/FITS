@@ -1,0 +1,89 @@
+phase: E01
+status: pre_registered
+pre_registered_at_utc: "2026-08-07T06:55:02Z"
+claim: downstream-pipeline mechanism-level replication only
+
+dataset:
+  name: VISION
+  base_url: https://lesc.dinfo.unifi.it/VISION/dataset
+  license: CC-BY-SA-4.0
+  license_url: https://creativecommons.org/licenses/by-sa/4.0/
+  citation_doi: https://doi.org/10.1186/s13635-017-0067-2
+  devices:
+    - D02_Apple_iPhone4s
+    - D04_LG_D290
+    - D05_Apple_iPhone5c
+    - D15_Apple_iPhone6
+    - D19_Apple_iPhone6Plus
+  pipelines:
+    native:
+      directory: nat
+      filename_token: nat
+      resolution: [3264, 2448]
+    facebook_high:
+      directory: natFBH
+      filename_token: natFBH
+      resolution: [2048, 1536]
+    facebook_low:
+      directory: natFBL
+      filename_token: natFBL
+      resolution: [1224, 918]
+    whatsapp:
+      directory: natWA
+      filename_token: natWA
+      resolution: [1280, 960]
+  splits:
+    template: [1, 5]
+    calibration: [21, 25]
+    test: [41, 50]
+  expected_file_count: 400
+  download_workers: 16
+  download_retries: 5
+  request_timeout_seconds: 180
+
+extractor:
+  implementation: polimi-ispl/prnu-python
+  commit: 91e1585a39287e26f9e770b71cf9124c35d9248d
+  functions_sha256: 9c26c0c854283145218950c7a63f04ef894b7c1b735bb18249ac42d74408b45f
+  levels: 4
+  sigma: 5.0
+  geometry: full_frame
+  decode: pillow_native_rgb_no_exif_transpose
+  resize: false
+  crop: false
+  recompress: false
+  color_conversion: false
+
+scoring:
+  similarity: squared_aligned_ncc
+  raw_score: ncc_signed_squared
+  subtraction: candidate_score - first_sorted_control_score
+  fits: candidate_score / first_sorted_control_score
+  fits_plus: candidate_score / median(all_eligible_control_scores)
+  log_ratio: log(candidate_score) - log(median_control_score)
+  stabilizer: 0.0
+  control_rule: same_pipeline_different_device_excluding_candidate_and_query_source
+
+evaluation:
+  target_far: 0.05
+  threshold_quantile_method: higher
+  methods: [raw_score, subtraction_score, fits_score, fits_plus_score]
+  threshold_source: calibration_only
+  report_ecdf: true
+  report_histogram: true
+  report_threshold_cv: true
+
+completion_gate:
+  exact_file_count: 400
+  require_all_sha256: true
+  require_exact_registered_dimensions: true
+  require_disjoint_source_indices: true
+  minimum_calibration_h0_per_pipeline: 100
+  minimum_test_h0_per_pipeline: 200
+  minimum_test_h1_per_pipeline: 50
+
+mechanism_hypothesis:
+  fits_plus_threshold_cv_below_raw: true
+  fits_plus_mean_pairwise_h0_ks_below_raw: true
+
+stop_rule: A completion-gate failure fails E01; hypothesis failure is reported without relabeling the phase as an AIGC detector result.

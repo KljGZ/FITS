@@ -9,6 +9,7 @@ from collections.abc import Sequence
 from pathlib import Path
 
 from gfits import __version__
+from gfits.e01 import download_vision_e01, run_e01
 from gfits.manifest import ManifestError, build_manifest, verify_manifest
 from gfits.prnu_validation import validate_prnu
 from gfits.synthetic import validate_synthetic_fits
@@ -17,7 +18,7 @@ from gfits.synthetic import validate_synthetic_fits
 def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="gfits",
-        description="G-FITS reproducible research utilities (Phase 0 and E00)",
+        description="G-FITS reproducible research utilities (Phase 0 through E01)",
     )
     parser.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
     commands = parser.add_subparsers(dest="command", required=True)
@@ -64,6 +65,25 @@ def _parser() -> argparse.ArgumentParser:
         choices=("development", "gate"),
         default="gate",
     )
+
+    download = commands.add_parser(
+        "download-vision-e01",
+        help="download and hash the pre-registered VISION E01 subset without transforms",
+    )
+    download.add_argument("--config", type=Path, required=True)
+    download.add_argument("--data-root", type=Path, required=True)
+    download.add_argument("--manifest", type=Path, required=True)
+
+    e01 = commands.add_parser(
+        "run-e01",
+        help="run the pre-registered real downstream-pipeline mechanism replication",
+    )
+    e01.add_argument("--config", type=Path, required=True)
+    e01.add_argument("--manifest", type=Path, required=True)
+    e01.add_argument("--data-root", type=Path, required=True)
+    e01.add_argument("--upstream-root", type=Path, required=True)
+    e01.add_argument("--output-dir", type=Path, required=True)
+    e01.add_argument("--cache-root", type=Path, required=True)
     return parser
 
 
@@ -89,11 +109,26 @@ def main(argv: Sequence[str] | None = None) -> int:
             result = verification.as_dict()
         elif arguments.command == "validate-prnu":
             result = validate_prnu(arguments.upstream_root, arguments.output)
-        else:
+        elif arguments.command == "validate-synthetic-fits":
             result = validate_synthetic_fits(
                 arguments.config,
                 arguments.output_dir,
                 profile=arguments.profile,
+            )
+        elif arguments.command == "download-vision-e01":
+            result = download_vision_e01(
+                arguments.config,
+                arguments.data_root,
+                arguments.manifest,
+            )
+        else:
+            result = run_e01(
+                arguments.config,
+                arguments.manifest,
+                arguments.data_root,
+                arguments.upstream_root,
+                arguments.output_dir,
+                arguments.cache_root,
             )
         print(json.dumps(result, ensure_ascii=False, indent=2))
         succeeded = bool(result.get("ok", result.get("passed", False)))

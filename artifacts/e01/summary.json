@@ -1,0 +1,100 @@
+{
+  "schema": "gfits.e01-mechanism-validation/v1",
+  "phase": "E01",
+  "claim": "downstream-pipeline mechanism-level replication only",
+  "generated_at_utc": "2026-08-07T07:35:05.827638Z",
+  "passed": true,
+  "configuration_sha256": "595ac3655d25a16c647e7338063604ae8a6a325ab5fa11eb2f1f52c111400b6a",
+  "manifest_sha256": "e0d31c77d0316b6cb661974b78b91687685db802bd36fa61a296b1317977ddbd",
+  "source_sha256": {
+    "src/gfits/e01.py": "ed3a21d9c44d5f562d01ed8a283ee5787b120c8704b941e41174ab857ddcefaf",
+    "src/gfits/matching.py": "7e5f03e764e0a54e8ac0ed75317749592f6911b5928c764b462b2b31277e56f8",
+    "configs/e01.yaml": "595ac3655d25a16c647e7338063604ae8a6a325ab5fa11eb2f1f52c111400b6a"
+  },
+  "git": {
+    "base_commit": "7e24c3dffbcd9401fa1db14f51a1a3af16c95eba",
+    "tracked_worktree_dirty": true
+  },
+  "dataset": {
+    "name": "VISION",
+    "record_count": 400,
+    "license": "CC-BY-SA-4.0",
+    "verification": {
+      "passed": true,
+      "checked": 400,
+      "issues": []
+    },
+    "transformations_by_gfits": []
+  },
+  "extractor": {
+    "implementation": "polimi-ispl/prnu-python",
+    "commit": "91e1585a39287e26f9e770b71cf9124c35d9248d",
+    "functions_sha256": "9c26c0c854283145218950c7a63f04ef894b7c1b735bb18249ac42d74408b45f",
+    "levels": 4,
+    "sigma": 5.0,
+    "geometry": "full_frame",
+    "decode": "pillow_native_rgb_no_exif_transpose",
+    "resize": false,
+    "crop": false,
+    "recompress": false,
+    "color_conversion": false
+  },
+  "scoring": {
+    "similarity": "squared_aligned_ncc",
+    "raw_score": "ncc_signed_squared",
+    "subtraction": "candidate_score - first_sorted_control_score",
+    "fits": "candidate_score / first_sorted_control_score",
+    "fits_plus": "candidate_score / median(all_eligible_control_scores)",
+    "log_ratio": "log(candidate_score) - log(median_control_score)",
+    "stabilizer": 0.0,
+    "control_rule": "same_pipeline_different_device_excluding_candidate_and_query_source"
+  },
+  "completion_gate": {
+    "passed": true,
+    "checks": {
+      "exact_file_count": true,
+      "all_sha256_verified": true,
+      "exact_registered_dimensions": true,
+      "disjoint_source_indices": true,
+      "minimum_evaluation_counts": true,
+      "no_gfits_transformations": true
+    }
+  },
+  "aggregate": {
+    "methods": {
+      "raw_score": {
+        "threshold_mean": 3.135865077405119e-06,
+        "threshold_cv": 0.602924881985016,
+        "mean_pairwise_h0_ks": 0.3116666666666667
+      },
+      "subtraction_score": {
+        "threshold_mean": 2.5959513646117035e-06,
+        "threshold_cv": 0.6174215076632246,
+        "mean_pairwise_h0_ks": 0.2125
+      },
+      "fits_score": {
+        "threshold_mean": 62.02785442072596,
+        "threshold_cv": 0.4003419761426622,
+        "mean_pairwise_h0_ks": 0.07166666666666667
+      },
+      "fits_plus_score": {
+        "threshold_mean": 29.88422514885115,
+        "threshold_cv": 0.31122287133994736,
+        "mean_pairwise_h0_ks": 0.060000000000000005
+      }
+    },
+    "mechanism_hypothesis": {
+      "fits_plus_threshold_cv_below_raw": true,
+      "fits_plus_mean_pairwise_h0_ks_below_raw": true,
+      "passed": true
+    }
+  },
+  "artifacts": {
+    "scores.csv": "4b07d2212a7004eed9201863a0b1e240861408052bb780176454320aa5dc9351",
+    "fingerprints.csv": "5f5b77bd431dbfb26fad50507239f41775a86b3985a1504ab06ff310e4500808",
+    "threshold-evaluation.csv": "9cdc9620b9f784138aca8a8021aa968ce3c951c355d132c24f7a23a48f2a4b00",
+    "h0-h1-histograms.png": "65f247035d306f9f2bb08aac72d3b96a0be56382d8db636b1c6b1fbe50709414",
+    "h0-ecdf.png": "ab555c09e027f9ed95b8dad3bbf04cffaa9d5180205eef7668fbd10ade3ed5cd",
+    "calibration-diagnostics.png": "9b2ec6cc16d4302ef4f6a318cf651948be17ba4e2413e6591df6406a21700a29"
+  }
+}
