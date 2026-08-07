@@ -1,0 +1,43 @@
+# Python and notebooks
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+
+# Local environments and editor state
+.venv/
+venv/
+.idea/
+.vscode/
+
+# Secrets and local configuration
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Large research artifacts must live outside Git
+data/
+datasets/
+checkpoints/
+weights/
+outputs/
+results/
+logs/
+runs/
+wandb/
+.cache/
+*.pt
+*.pth
+*.ckpt
+*.onnx
+*.h5
+*.hdf5
+
+# OS-generated files
+.DS_Store
+Thumbs.db
+
