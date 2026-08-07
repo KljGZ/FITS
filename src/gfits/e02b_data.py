@@ -101,6 +101,9 @@ def load_e02b_config(path: Path) -> dict[str, Any]:
     if set(groups) != {"cross_family", "near_family"}:
         raise ValueError("E02b needs independent cross_family and near_family suites")
     models = _require(payload, "models")
+    for model_id, model in models.items():
+        if model.get("weight_format") not in {"safetensors", "pytorch_bin"}:
+            raise ValueError(f"{model_id} lacks an explicit supported weight format")
     for group_id, group in groups.items():
         members = list(_require(group, "models"))
         if len(members) < 4 or len(set(members)) != len(members):

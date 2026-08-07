@@ -29,6 +29,33 @@ from gfits.manifest import sha256_file
 E02B_FRAGMENT_SCHEMA = "gfits.e02b-generation-fragment/v1"
 
 
+def _snapshot_allow_patterns(model: Mapping[str, Any]) -> list[str]:
+    """Return the minimal audited config/tokenizer/weight file policy."""
+
+    patterns = [
+        "*.json",
+        "**/*.json",
+        "*.txt",
+        "**/*.txt",
+        "*.model",
+        "**/*.model",
+        "*.py",
+        "**/*.py",
+    ]
+    weight_format = str(model["weight_format"])
+    variant = model.get("variant")
+    if weight_format == "safetensors":
+        suffix = f".{variant}.safetensors" if variant else ".safetensors"
+    elif weight_format == "pytorch_bin":
+        if variant:
+            raise ValueError("binary E02b weights may not declare a variant")
+        suffix = ".bin"
+    else:
+        raise ValueError(f"unsupported E02b weight format: {weight_format}")
+    patterns.extend((f"*{suffix}", f"**/*{suffix}"))
+    return patterns
+
+
 def _inventory(root: Path, *, subdirectory: str | None = None) -> dict[str, Any]:
     target = root / subdirectory if subdirectory else root
     if not target.is_dir():
@@ -61,6 +88,7 @@ def _download_repositories(model: Mapping[str, Any], cache_dir: Path) -> list[di
                 repo_id=str(repository["repo_id"]),
                 revision=str(repository["revision"]),
                 cache_dir=str(cache_dir.resolve()),
+                allow_patterns=_snapshot_allow_patterns(model),
             )
         )
         inventory = _inventory(root)
@@ -105,7 +133,13 @@ def _load_pipeline(
         raise ImportError("E02b generation requires environment-e02b.yml") from error
     dtype = torch.float16 if model["compute_dtype"] == "float16" else torch.float32
     adapter = str(model["adapter"])
-    common = {"torch_dtype": dtype, "local_files_only": True}
+    common = {
+        "torch_dtype": dtype,
+        "local_files_only": True,
+        "use_safetensors": model["weight_format"] == "safetensors",
+    }
+    if model.get("variant"):
+        common["variant"] = str(model["variant"])
     if adapter == "stable_diffusion":
         pipeline = StableDiffusionPipeline.from_pretrained(
             repositories[0]["snapshot_root"],

@@ -1,6 +1,6 @@
 phase: E02b
 status: pre_registered
-pre_registered_at_utc: "2026-08-07T12:03:25Z"
+pre_registered_at_utc: "2026-08-07T12:09:03Z"
 claim: controlled generator-source fingerprint confirmation; not G-FITS calibration
 
 governance:
@@ -98,6 +98,8 @@ models:
     family: latent_diffusion
     base_model: CompVis/stable-diffusion-v1-4
     adapter: stable_diffusion
+    weight_format: safetensors
+    variant: fp16
     repositories:
       - repo_id: CompVis/stable-diffusion-v1-4
         revision: 133a221b8aa7292a167afc5127cb63fb5005638b
@@ -114,6 +116,8 @@ models:
     family: latent_diffusion
     base_model: stable-diffusion-v1-5/stable-diffusion-v1-5
     adapter: stable_diffusion
+    weight_format: safetensors
+    variant: fp16
     repositories:
       - repo_id: stable-diffusion-v1-5/stable-diffusion-v1-5
         revision: 451f4fe16113bff5a5d2269ed5ad43b00592e9a14
@@ -130,6 +134,7 @@ models:
     family: distilled_latent_diffusion
     base_model: segmind/tiny-sd
     adapter: stable_diffusion
+    weight_format: pytorch_bin
     repositories:
       - repo_id: segmind/tiny-sd
         revision: cad0bd7495fa6c4bcca01b19a723dc91627fe84f
@@ -146,6 +151,7 @@ models:
     family: latent_diffusion_sd15_checkpoint
     base_model: runwayml/stable-diffusion-v1-5
     adapter: stable_diffusion
+    weight_format: safetensors
     repositories:
       - repo_id: prompthero/openjourney-v4
         revision: b195ed2d503f3eb29637050a886d77bd81d35f0e
@@ -162,6 +168,8 @@ models:
     family: latent_diffusion_sd15_checkpoint
     base_model: runwayml/stable-diffusion-v1-5
     adapter: stable_diffusion
+    weight_format: safetensors
+    variant: fp16
     repositories:
       - repo_id: Lykon/dreamshaper-8
         revision: a7e52b98680b1ba8ff7bce97c7f9f2e2e5337917
@@ -178,6 +186,7 @@ models:
     family: unclip_latent_diffusion
     base_model: kandinsky-community/kandinsky-2-2
     adapter: kandinsky22
+    weight_format: safetensors
     repositories:
       - repo_id: kandinsky-community/kandinsky-2-2-prior
         revision: 9fc51ad5732afc5d031724219d22e6c421799c5a8
@@ -198,6 +207,7 @@ models:
     family: diffusion_transformer
     base_model: PixArt-alpha/PixArt-Sigma-XL-2-1024-MS
     adapter: pixart_sigma
+    weight_format: safetensors
     repositories:
       - repo_id: PixArt-alpha/PixArt-Sigma-XL-2-1024-MS
         revision: e102b3591cc82e97071b8b4cb90d834d0c4877207

@@ -31,6 +31,7 @@ from gfits.e02b_features import (
     statistical_signature,
     whitened_global_ncc,
 )
+from gfits.e02b_generation import _snapshot_allow_patterns
 from gfits.e02b_statistics import (
     attribution_metrics,
     auxiliary_sign_flip_test,
@@ -68,6 +69,16 @@ def test_e02b_full_factorial_and_split_isolation() -> None:
     assert not seed_splits["calibration"] & seed_splits["test"]
     assert {row["native_resolution"] for row in plan} == {256, 512, 768, 1024}
     assert set(config["model_groups"]) == {"cross_family", "near_family"}
+
+
+def test_model_snapshot_policy_avoids_duplicate_weight_formats() -> None:
+    config = load_e02b_config(CONFIG)
+    sd_patterns = _snapshot_allow_patterns(config["models"]["sd14"])
+    tiny_patterns = _snapshot_allow_patterns(config["models"]["tiny_sd"])
+    assert "**/*.fp16.safetensors" in sd_patterns
+    assert not any(pattern.endswith(".bin") for pattern in sd_patterns)
+    assert "**/*.bin" in tiny_patterns
+    assert not any(pattern.endswith(".safetensors") for pattern in tiny_patterns)
 
 
 def test_pro_audit_traceability_is_exactly_one_to_one() -> None:
