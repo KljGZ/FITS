@@ -18,6 +18,17 @@ conda env create -f environment.yml
 conda activate fits-aigc
 ```
 
+On the configured workstation, the remote host is available through the SSH
+alias `fits-remote`:
+
+```bash
+ssh fits-remote
+cd /home/jkl/FITS
+conda activate fits-aigc
+```
+
+Jupyter also exposes the environment as the `Python (fits-aigc)` kernel.
+
 Verify the GPU runtime:
 
 ```bash
