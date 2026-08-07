@@ -308,7 +308,7 @@ def _summarize(
     variance_rows: Sequence[Mapping[str, Any]],
     gate: Mapping[str, Any],
 ) -> dict[str, Any]:
-    h0_low, h0_high = [float(value) for value in gate["h0_fits_plus_median_interval"]]
+    h0_low, h0_high = (float(value) for value in gate["h0_fits_plus_median_interval"])
     h1_minimum = float(gate["h1_fits_plus_median_min"])
     variance_ratio_maximum = float(gate["variance_final_to_initial_max"])
     slope_maximum = float(gate["variance_log_slope_max"])

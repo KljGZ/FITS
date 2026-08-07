@@ -189,9 +189,9 @@ models:
     weight_format: safetensors
     repositories:
       - repo_id: kandinsky-community/kandinsky-2-2-prior
-        revision: 9fc51ad5732afc5d031724219d22e6c42179c5a88
+        revision: 9fc51ad5732afc5d031724219d22e6c421799c5a8
       - repo_id: kandinsky-community/kandinsky-2-2-decoder
-        revision: 9ae140d347fed8ce6e8bb3005dcc1f48543bb88e3
+        revision: 9ae140d347fed8ce6e8bb3005dcc1f485443bb8e3
     checkpoint_hash: combined_revision_inventory_sha256
     vae: movq_integrated_decoder
     vae_hash: revision_inventory_component_sha256
