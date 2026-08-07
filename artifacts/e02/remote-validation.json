@@ -1,0 +1,87 @@
+{
+  "schema": "gfits.remote-validation/v1",
+  "phase": "E02",
+  "generated_at_utc": "2026-08-07T09:54:11.0695979Z",
+  "repository_base_commit": "4cf1f08ec8414b24848ae8a3aa195b3d6c5f9f54",
+  "configuration_sha256": "c988687db9f3a555ad8136dbee49747c4cab5c765061ded84f40670f04086489",
+  "source_manifest_sha256": "91f96746eb54c4a4f09bdf44bd360ea7fa742fed9a806de7731123f632368e01",
+  "residual_manifest_sha256": "395070f1fd92fb4bdce94e8ff9edd481e520af6c761bd7272a384dcce8c64754",
+  "fingerprint_bank_sha256": "630f9a192b4ff89929eddd3c0d1bf83c77bc4dcde982c55d48ec2ff262814d94",
+  "scores_sha256": "898248bc7f3271bf667122084ceee352858b0b743b7e57a04ca72bc73eeffa9e",
+  "condition_evaluation_sha256": "39cc8698a4439cb592b7bad51127461715c7c1e71b51830e8c06e87af0eb0d90",
+  "summary_sha256": "b0ded1b59f0ee6a9e489ab7c36bca28ce37b4ed812aca6db1b36c7c53ab366b8",
+  "report_sha256": "2cb6dbd003163da926676e1c207ef9e940c8518adfa3e1eb29a2f1e486b8d566",
+  "upstream": {
+    "prnu_commit": "91e1585a39287e26f9e770b71cf9124c35d9248d",
+    "prnu_functions_sha256": "9c26c0c854283145218950c7a63f04ef894b7c1b735bb18249ac42d74408b45f",
+    "noiseprint_commit": "c06034eedc9235b642a4da9ea8ef25901d6add93",
+    "noiseprint_checkpoint_sha256": {
+      "model.data-00000-of-00001": "e5b813ac87b2972991766c8a10195f464ed276593eaaf157a1bd297228ba70d6",
+      "model.index": "d28b09038156b15ed438bae3242df33c4e75b21bb79a93024a4923b7f467a77a",
+      "model.meta": "940467a4384c0fe916829f80d83816eead5b8b951d26e06b07f54f2d8b3943d5"
+    }
+  },
+  "platform": "Linux-5.15.0-140-generic-x86_64-with-glibc2.31",
+  "operating_system": "Ubuntu 20.04.6 LTS",
+  "python": "3.10.20",
+  "packages": {
+    "numpy": "1.26.4",
+    "Pillow": "11.0.0",
+    "PyWavelets": "1.7.0",
+    "scipy": "1.14.1",
+    "scikit-image": "0.24.0",
+    "scikit-learn": "1.5.2",
+    "tensorflow-cpu": "2.15.1"
+  },
+  "hardware_observed": {
+    "gpu_count": 8,
+    "gpu_model": "NVIDIA GeForce RTX 4090",
+    "driver": "550.78",
+    "e02_compute_path": "remote CPU in isolated fits-aigc and fits-noiseprint environments"
+  },
+  "data_transport": {
+    "reason": "The remote Google Drive endpoint timed out before extraction; range-selected original members were acquired locally and transferred without transformation.",
+    "selected_archive_sha256": "4f9adc67edbcacc1c93cf8c5dc988f944cb4abe5b3f4b3cce05726667995da67",
+    "selected_archive_hash_matched_after_transfer": true,
+    "genimage_boundary": "revision-pinned unofficial byte mirror of the official public release"
+  },
+  "persistent_storage": {
+    "selected_source_bytes": "/mnt/data/jkl/FITS/datasets/e02/selected (89M)",
+    "residual_cache": "/mnt/data/jkl/FITS/cache/e02/residuals (1.5G)",
+    "fingerprint_cache": "/mnt/data/jkl/FITS/cache/e02/fingerprints (153M)",
+    "output": "/mnt/data/jkl/FITS/artifacts/e02 (8.2M)"
+  },
+  "quality_gate": {
+    "ruff_check": "passed",
+    "ruff_format_check": "17 files already formatted",
+    "pytest": {
+      "passed": 29,
+      "failed": 0,
+      "duration_seconds": 3.39,
+      "junit_sha256": "4c8c5476841d7833bad918f9da86fb78b535f425fbf14ffe7d78a112bf68b91e"
+    },
+    "noiseprint_equivalence": {
+      "input": "deterministic 64x64 RGB uint8 ramp",
+      "adapter_vs_official_max_abs_error": 0.0,
+      "output_sha256": "400d2541384a9528b82e2e2b0926798ff1f2ab9378a4e54c7aaabe914a03e26b"
+    }
+  },
+  "independent_hash_verification": {
+    "source_files": "440/440",
+    "residual_caches": "1760/1760",
+    "fingerprints": "160/160",
+    "score_rows": 17408,
+    "condition_rows": 48
+  },
+  "experiment": {
+    "completed_execution": true,
+    "confirmatory_completion_gate": "failed_missing_per_image_seed_metadata",
+    "statistical_signal_gate": "failed_cross_suite_requirement",
+    "passing_conditions_by_suite": {
+      "dm_256": 10,
+      "genimage_256": 15,
+      "genimage_512": 0
+    },
+    "mainline_decision": "stop_confirmatory_claim_and_require_controlled_seed_provenance"
+  }
+}

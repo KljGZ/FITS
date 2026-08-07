@@ -3,3 +3,7 @@
 /artifacts/e01/** -text
 /artifacts/e01/*.csv -diff
 /artifacts/e01/pytest-junit.xml -diff
+/artifacts/e02/** -text -whitespace
+/artifacts/e02/**/*.csv -diff
+/artifacts/e02/pytest-junit.xml -diff
+/reports/e02/E02_REPORT.md -text

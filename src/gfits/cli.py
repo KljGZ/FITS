@@ -10,6 +10,14 @@ from pathlib import Path
 
 from gfits import __version__
 from gfits.e01 import download_vision_e01, run_e01
+from gfits.e02 import (
+    build_e02_fingerprint_bank,
+    evaluate_e02,
+    extract_e02_residuals,
+    generate_e02_report,
+    score_e02_pairs,
+)
+from gfits.e02_data import prepare_e02_data
 from gfits.manifest import ManifestError, build_manifest, verify_manifest
 from gfits.prnu_validation import validate_prnu
 from gfits.synthetic import validate_synthetic_fits
@@ -18,7 +26,7 @@ from gfits.synthetic import validate_synthetic_fits
 def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="gfits",
-        description="G-FITS reproducible research utilities (Phase 0 through E01)",
+        description="G-FITS reproducible research utilities (Phase 0 through E02)",
     )
     parser.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
     commands = parser.add_subparsers(dest="command", required=True)
@@ -84,6 +92,73 @@ def _parser() -> argparse.ArgumentParser:
     e01.add_argument("--upstream-root", type=Path, required=True)
     e01.add_argument("--output-dir", type=Path, required=True)
     e01.add_argument("--cache-root", type=Path, required=True)
+
+    prepare_e02 = commands.add_parser(
+        "prepare-e02-data",
+        help="range-extract and hash the pre-registered E02 archive members",
+    )
+    prepare_e02.add_argument("--config", type=Path, required=True)
+    prepare_e02.add_argument("--data-root", type=Path, required=True)
+    prepare_e02.add_argument("--manifest", type=Path, required=True)
+
+    residuals = commands.add_parser(
+        "extract-residuals",
+        help="extract one or more registered E02 residual representations",
+    )
+    residuals.add_argument("--config", type=Path, required=True)
+    residuals.add_argument("--manifest", type=Path, required=True)
+    residuals.add_argument("--data-root", type=Path, required=True)
+    residuals.add_argument("--upstream-root", type=Path, required=True)
+    residuals.add_argument("--cache-root", type=Path, required=True)
+    residuals.add_argument("--residual-manifest", type=Path, required=True)
+    residuals.add_argument(
+        "--extractor",
+        action="append",
+        choices=("wavelet", "srm", "low_bit", "noiseprint"),
+        help="repeat to run a subset; the default runs all registered extractors",
+    )
+    residuals.add_argument("--noiseprint-root", type=Path)
+
+    bank = commands.add_parser(
+        "build-fingerprint-bank",
+        help="build the complete E02 extractor-by-aggregator fingerprint bank",
+    )
+    bank.add_argument("--config", type=Path, required=True)
+    bank.add_argument("--manifest", type=Path, required=True)
+    bank.add_argument("--residual-manifest", type=Path, required=True)
+    bank.add_argument("--bank-root", type=Path, required=True)
+    bank.add_argument("--bank-manifest", type=Path, required=True)
+
+    score = commands.add_parser(
+        "score-pairs",
+        help="score E02 calibration/test queries against native-geometry fingerprints",
+    )
+    score.add_argument("--config", type=Path, required=True)
+    score.add_argument("--manifest", type=Path, required=True)
+    score.add_argument("--residual-manifest", type=Path, required=True)
+    score.add_argument("--bank-manifest", type=Path, required=True)
+    score.add_argument("--scores", type=Path, required=True)
+
+    evaluate = commands.add_parser(
+        "evaluate-attribution",
+        help="run the frozen E02 paired tests and mainline stop/go gate",
+    )
+    evaluate.add_argument("--config", type=Path, required=True)
+    evaluate.add_argument("--manifest", type=Path, required=True)
+    evaluate.add_argument("--data-root", type=Path, required=True)
+    evaluate.add_argument("--residual-manifest", type=Path, required=True)
+    evaluate.add_argument("--scores", type=Path, required=True)
+    evaluate.add_argument("--output-dir", type=Path, required=True)
+
+    report = commands.add_parser(
+        "generate-report",
+        help="render the E02 report from frozen machine-readable evidence",
+    )
+    report.add_argument("--config", type=Path, required=True)
+    report.add_argument("--manifest", type=Path, required=True)
+    report.add_argument("--summary", type=Path, required=True)
+    report.add_argument("--evaluation", type=Path, required=True)
+    report.add_argument("--report", type=Path, required=True)
     return parser
 
 
@@ -121,7 +196,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                 arguments.data_root,
                 arguments.manifest,
             )
-        else:
+        elif arguments.command == "run-e01":
             result = run_e01(
                 arguments.config,
                 arguments.manifest,
@@ -129,6 +204,56 @@ def main(argv: Sequence[str] | None = None) -> int:
                 arguments.upstream_root,
                 arguments.output_dir,
                 arguments.cache_root,
+            )
+        elif arguments.command == "prepare-e02-data":
+            result = prepare_e02_data(
+                arguments.config,
+                arguments.data_root,
+                arguments.manifest,
+            )
+        elif arguments.command == "extract-residuals":
+            result = extract_e02_residuals(
+                arguments.config,
+                arguments.manifest,
+                arguments.data_root,
+                arguments.upstream_root,
+                arguments.cache_root,
+                arguments.residual_manifest,
+                extractor_names=arguments.extractor,
+                noiseprint_root=arguments.noiseprint_root,
+            )
+        elif arguments.command == "build-fingerprint-bank":
+            result = build_e02_fingerprint_bank(
+                arguments.config,
+                arguments.manifest,
+                arguments.residual_manifest,
+                arguments.bank_root,
+                arguments.bank_manifest,
+            )
+        elif arguments.command == "score-pairs":
+            result = score_e02_pairs(
+                arguments.config,
+                arguments.manifest,
+                arguments.residual_manifest,
+                arguments.bank_manifest,
+                arguments.scores,
+            )
+        elif arguments.command == "evaluate-attribution":
+            result = evaluate_e02(
+                arguments.config,
+                arguments.manifest,
+                arguments.data_root,
+                arguments.residual_manifest,
+                arguments.scores,
+                arguments.output_dir,
+            )
+        else:
+            result = generate_e02_report(
+                arguments.config,
+                arguments.manifest,
+                arguments.summary,
+                arguments.evaluation,
+                arguments.report,
             )
         print(json.dumps(result, ensure_ascii=False, indent=2))
         succeeded = bool(result.get("ok", result.get("passed", False)))

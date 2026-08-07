@@ -18,6 +18,13 @@ WhatsApp pipelines. E01 passes its registered alignment hypothesis, while
 showing no attribution-performance improvement over the raw score. It is
 therefore still **not** an AIGC detector result.
 
+Phase E02 runs a pre-registered same-source generator-signal screen on native
+DMimageDetection and GenImage subsets. It compares four residual extractors
+(wavelet, SRM, two-low-bit, and Noiseprint) with four fingerprint aggregators
+(mean, PRNU MLE, median, and trimmed mean). The public releases do not publish
+per-image random seeds, so E02 results are explicitly exploratory and the full
+confirmatory metadata gate cannot pass, irrespective of apparent signal.
+
 ## Environment
 
 The reference environment is Python 3.10 with PyTorch 2.5.1/CUDA 12.4. On the
@@ -40,7 +47,17 @@ ruff format --check .
 pytest
 ```
 
-## Phase 0, E00, and E01 CLI
+Noiseprint is licensed for informational/nonprofit use and its official code
+requires TensorFlow 1.2.1. E02 runs the locked upstream graph through a
+TensorFlow 2.15 compatibility adapter in an isolated environment; the upstream
+checkout is not modified.
+
+```bash
+conda env create -f environment-noiseprint.yml
+conda activate fits-noiseprint
+```
+
+## Phase 0 through E02 CLI
 
 The manifest records the raw bytes of supported image files. Building or
 verifying a manifest never decodes, resizes, crops, recompresses, or changes an
@@ -105,6 +122,76 @@ The registered E01 threshold is fitted only on calibration H0 rows. Template,
 calibration, and test source indices are disjoint. See the stage report for the
 claim boundary and the negative performance finding.
 
+E02 range-extracts only the frozen archive members, preserving and hashing the
+original PNG bytes. GenImage is kept in independent 256x256 and 512x512 suites;
+no geometry is normalized.
+
+```bash
+python -m gfits.cli prepare-e02-data \
+  --config configs/e02.yaml \
+  --data-root /mnt/data/jkl/FITS/datasets/e02/selected \
+  --manifest /mnt/data/jkl/FITS/datasets/e02/source-manifest.json
+
+python -m gfits.cli extract-residuals \
+  --config configs/e02.yaml \
+  --manifest /mnt/data/jkl/FITS/datasets/e02/source-manifest.json \
+  --data-root /mnt/data/jkl/FITS/datasets/e02/selected \
+  --upstream-root /mnt/data/jkl/FITS/checkpoints/prnu-python \
+  --cache-root /mnt/data/jkl/FITS/cache/e02/residuals \
+  --residual-manifest /mnt/data/jkl/FITS/cache/e02/residual-manifest.json \
+  --extractor wavelet --extractor srm --extractor low_bit
+
+# Run this command from the isolated fits-noiseprint environment.
+python -m gfits.cli extract-residuals \
+  --config configs/e02.yaml \
+  --manifest /mnt/data/jkl/FITS/datasets/e02/source-manifest.json \
+  --data-root /mnt/data/jkl/FITS/datasets/e02/selected \
+  --upstream-root /mnt/data/jkl/FITS/checkpoints/prnu-python \
+  --noiseprint-root /mnt/data/jkl/FITS/checkpoints/noiseprint-src \
+  --cache-root /mnt/data/jkl/FITS/cache/e02/residuals \
+  --residual-manifest /mnt/data/jkl/FITS/cache/e02/residual-manifest.json \
+  --extractor noiseprint
+```
+
+```bash
+python -m gfits.cli build-fingerprint-bank \
+  --config configs/e02.yaml \
+  --manifest /mnt/data/jkl/FITS/datasets/e02/source-manifest.json \
+  --residual-manifest /mnt/data/jkl/FITS/cache/e02/residual-manifest.json \
+  --bank-root /mnt/data/jkl/FITS/cache/e02/fingerprints \
+  --bank-manifest /mnt/data/jkl/FITS/cache/e02/fingerprint-bank.json
+
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 python -m gfits.cli score-pairs \
+  --config configs/e02.yaml \
+  --manifest /mnt/data/jkl/FITS/datasets/e02/source-manifest.json \
+  --residual-manifest /mnt/data/jkl/FITS/cache/e02/residual-manifest.json \
+  --bank-manifest /mnt/data/jkl/FITS/cache/e02/fingerprint-bank.json \
+  --scores /mnt/data/jkl/FITS/artifacts/e02/scores.csv
+
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 python -m gfits.cli evaluate-attribution \
+  --config configs/e02.yaml \
+  --manifest /mnt/data/jkl/FITS/datasets/e02/source-manifest.json \
+  --data-root /mnt/data/jkl/FITS/datasets/e02/selected \
+  --residual-manifest /mnt/data/jkl/FITS/cache/e02/residual-manifest.json \
+  --scores /mnt/data/jkl/FITS/artifacts/e02/scores.csv \
+  --output-dir /mnt/data/jkl/FITS/artifacts/e02/evaluation
+
+python -m gfits.cli generate-report \
+  --config configs/e02.yaml \
+  --manifest /mnt/data/jkl/FITS/datasets/e02/source-manifest.json \
+  --summary /mnt/data/jkl/FITS/artifacts/e02/evaluation/summary.json \
+  --evaluation /mnt/data/jkl/FITS/artifacts/e02/evaluation/condition-evaluation.csv \
+  --report reports/e02/E02_REPORT.md
+```
+
+Test rows are used only by the frozen evaluation; calibration rows never select
+an extractor, aggregator, or test criterion. The completed exploratory screen
+found 25/48 passing conditions: 10/16 on DM 256x256, 15/16 on GenImage 256x256,
+and 0/16 on GenImage 512x512. The cross-suite statistical gate therefore failed.
+Both public releases also omit per-image seed identity, so the confirmatory gate
+failed and the registered decision is
+`stop_confirmatory_claim_and_require_controlled_seed_provenance`.
+
 ## Repository layout
 
 ```text
@@ -118,6 +205,8 @@ reports/e00/           E00 definitions, results, and limitations
 artifacts/e00/         Raw E00 CSV, JSON, and diagnostic figure
 reports/e01/           E01 protocol, results, evidence, and limitations
 artifacts/e01/         E01 manifest, raw scores, metrics, figures, and QA
+reports/e02/           E02 signal-screen result and metadata boundary
+artifacts/e02/         E02 manifests, scores, statistics, figures, and QA
 ```
 
 The Phase 0 source audit is in
@@ -126,6 +215,7 @@ The Phase 0 source audit is in
 The exact external revisions are in [`third_party/LOCK.json`](third_party/LOCK.json).
 The E00 result and interpretation are in [`reports/e00/E00_REPORT.md`](reports/e00/E00_REPORT.md).
 The E01 result and interpretation are in [`reports/e01/E01_REPORT.md`](reports/e01/E01_REPORT.md).
+The E02 result and interpretation are in [`reports/e02/E02_REPORT.md`](reports/e02/E02_REPORT.md).
 
 ## Remote storage
 
