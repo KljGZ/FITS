@@ -107,9 +107,12 @@ def load_e02b_config(path: Path) -> dict[str, Any]:
     for model_id, model in models.items():
         if model.get("weight_format") not in {"safetensors", "pytorch_bin"}:
             raise ValueError(f"{model_id} lacks an explicit supported weight format")
-        if model.get("adapter") == "stable_diffusion" and model.get(
-            "scheduler_parameters"
-        ) != {
+        expected_memory = (
+            "model_cpu_offload" if model_id == "pixart_sigma" else "resident_on_device"
+        )
+        if model.get("memory_strategy") != expected_memory:
+            raise ValueError(f"{model_id} has an unfrozen memory strategy")
+        if model.get("adapter") == "stable_diffusion" and model.get("scheduler_parameters") != {
             "algorithm_type": "dpmsolver++",
             "solver_order": 2,
             "final_sigmas_type": "zero",

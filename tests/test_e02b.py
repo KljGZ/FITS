@@ -87,6 +87,12 @@ def test_model_snapshot_policy_avoids_duplicate_weight_formats() -> None:
                 "solver_order": 2,
                 "final_sigmas_type": "zero",
             }
+    assert config["models"]["pixart_sigma"]["memory_strategy"] == "model_cpu_offload"
+    assert all(
+        model["memory_strategy"] == "resident_on_device"
+        for model_id, model in config["models"].items()
+        if model_id != "pixart_sigma"
+    )
 
 
 def test_pro_audit_traceability_is_exactly_one_to_one() -> None:

@@ -115,6 +115,18 @@ def _combined_hash(repositories: Sequence[Mapping[str, Any]], key: str) -> str:
     return hashlib.sha256(("\n".join(rows) + "\n").encode("utf-8")).hexdigest()
 
 
+def _place_pipeline(pipeline: Any, model: Mapping[str, Any], device: str) -> Any:
+    strategy = str(model["memory_strategy"])
+    if strategy == "resident_on_device":
+        return pipeline.to(device)
+    if strategy == "model_cpu_offload":
+        if not device.startswith("cuda:"):
+            raise ValueError("model_cpu_offload requires an explicit cuda:N device")
+        pipeline.enable_model_cpu_offload(gpu_id=int(device.split(":", maxsplit=1)[1]))
+        return pipeline
+    raise ValueError(f"unsupported E02b memory strategy: {strategy}")
+
+
 def _load_pipeline(
     model: Mapping[str, Any],
     repositories: Sequence[Mapping[str, Any]],
@@ -153,23 +165,19 @@ def _load_pipeline(
             **dict(model["scheduler_parameters"]),
         )
         pipeline.set_progress_bar_config(disable=True)
-        return pipeline.to(device)
+        return _place_pipeline(pipeline, model, device)
     if adapter == "kandinsky22":
         prior = KandinskyV22PriorPipeline.from_pretrained(
             repositories[0]["snapshot_root"], **common
-        ).to(device)
-        decoder = KandinskyV22Pipeline.from_pretrained(
-            repositories[1]["snapshot_root"], **common
-        ).to(device)
+        )
+        decoder = KandinskyV22Pipeline.from_pretrained(repositories[1]["snapshot_root"], **common)
         prior.set_progress_bar_config(disable=True)
         decoder.set_progress_bar_config(disable=True)
-        return prior, decoder
+        return _place_pipeline(prior, model, device), _place_pipeline(decoder, model, device)
     if adapter == "pixart_sigma":
-        pipeline = PixArtSigmaPipeline.from_pretrained(
-            repositories[0]["snapshot_root"], **common
-        ).to(device)
+        pipeline = PixArtSigmaPipeline.from_pretrained(repositories[0]["snapshot_root"], **common)
         pipeline.set_progress_bar_config(disable=True)
-        return pipeline
+        return _place_pipeline(pipeline, model, device)
     raise ValueError(f"unsupported E02b model adapter: {adapter}")
 
 
@@ -348,6 +356,7 @@ def generate_e02b_shard(
                 "sampler": model["sampler"],
                 "scheduler": model["scheduler"],
                 "scheduler_parameters": dict(model.get("scheduler_parameters", {})),
+                "memory_strategy": model["memory_strategy"],
                 "steps": int(model["steps"]),
                 "guidance_scale": float(model["guidance_scale"]),
                 "generation_code_commit": state.commit,
