@@ -24,6 +24,22 @@ Verify the GPU runtime:
 python -c "import torch; print(torch.__version__, torch.version.cuda, torch.cuda.is_available(), torch.cuda.get_device_name(0))"
 ```
 
+## Remote storage layout
+
+Large artifacts belong on the remote data volume rather than the system disk:
+
+```text
+/mnt/data/jkl/FITS/
+├── datasets/
+├── checkpoints/
+├── outputs/
+└── cache/
+```
+
+The installed remote environment defines `FITS_DATA_ROOT`,
+`FITS_CHECKPOINT_ROOT`, `FITS_OUTPUT_ROOT`, `HF_HOME`, `TORCH_HOME`, and
+`XDG_CACHE_HOME` so supported tools use this data volume automatically.
+
 The environment intentionally covers three future experiment families:
 
 - classical PRNU, correlation, and PCE-style analysis;
@@ -32,4 +48,3 @@ The environment intentionally covers three future experiment families:
 
 Datasets, model weights, logs, and experiment outputs are ignored by Git. They
 must not be committed to this repository.
-
