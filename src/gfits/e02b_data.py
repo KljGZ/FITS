@@ -6,6 +6,7 @@ import hashlib
 import io
 import json
 import os
+import re
 import subprocess
 from collections import Counter, defaultdict
 from collections.abc import Mapping
@@ -104,6 +105,9 @@ def load_e02b_config(path: Path) -> dict[str, Any]:
     for model_id, model in models.items():
         if model.get("weight_format") not in {"safetensors", "pytorch_bin"}:
             raise ValueError(f"{model_id} lacks an explicit supported weight format")
+        for repository in model.get("repositories", ()):
+            if re.fullmatch(r"[0-9a-f]{40}", str(repository.get("revision"))) is None:
+                raise ValueError(f"{model_id} repository revision is not a 40-hex commit")
     for group_id, group in groups.items():
         members = list(_require(group, "models"))
         if len(members) < 4 or len(set(members)) != len(members):

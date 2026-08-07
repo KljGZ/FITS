@@ -1,6 +1,6 @@
 phase: E02b
 status: pre_registered
-pre_registered_at_utc: "2026-08-07T12:09:03Z"
+pre_registered_at_utc: "2026-08-07T12:12:29Z"
 claim: controlled generator-source fingerprint confirmation; not G-FITS calibration
 
 governance:
@@ -120,7 +120,7 @@ models:
     variant: fp16
     repositories:
       - repo_id: stable-diffusion-v1-5/stable-diffusion-v1-5
-        revision: 451f4fe16113bff5a5d2269ed5ad43b00592e9a14
+        revision: 451f4fe16113bff5a5d2269ed5ad43b0592e9a14
     checkpoint_hash: revision_inventory_sha256
     vae: integrated
     vae_hash: revision_inventory_component_sha256
@@ -189,9 +189,9 @@ models:
     weight_format: safetensors
     repositories:
       - repo_id: kandinsky-community/kandinsky-2-2-prior
-        revision: 9fc51ad5732afc5d031724219d22e6c421799c5a8
+        revision: 9fc51ad5732afc5d031724219d22e6c42179c5a88
       - repo_id: kandinsky-community/kandinsky-2-2-decoder
-        revision: 9ae140d347fed8ce6e8bb3005dcc1f485443bb8e3
+        revision: 9ae140d347fed8ce6e8bb3005dcc1f48543bb88e3
     checkpoint_hash: combined_revision_inventory_sha256
     vae: movq_integrated_decoder
     vae_hash: revision_inventory_component_sha256
@@ -210,7 +210,7 @@ models:
     weight_format: safetensors
     repositories:
       - repo_id: PixArt-alpha/PixArt-Sigma-XL-2-1024-MS
-        revision: e102b3591cc82e97071b8b4cb90d834d0c4877207
+        revision: e102b3591cc82e97071b8b4cb90d834d0c487207
     checkpoint_hash: revision_inventory_sha256
     vae: integrated
     vae_hash: revision_inventory_component_sha256
