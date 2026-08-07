@@ -105,6 +105,14 @@ def load_e02b_config(path: Path) -> dict[str, Any]:
     for model_id, model in models.items():
         if model.get("weight_format") not in {"safetensors", "pytorch_bin"}:
             raise ValueError(f"{model_id} lacks an explicit supported weight format")
+        if model.get("adapter") == "stable_diffusion" and model.get(
+            "scheduler_parameters"
+        ) != {
+            "algorithm_type": "dpmsolver++",
+            "solver_order": 2,
+            "final_sigmas_type": "zero",
+        }:
+            raise ValueError(f"{model_id} has unfrozen DPM-Solver parameters")
         for repository in model.get("repositories", ()):
             if re.fullmatch(r"[0-9a-f]{40}", str(repository.get("revision"))) is None:
                 raise ValueError(f"{model_id} repository revision is not a 40-hex commit")

@@ -148,7 +148,10 @@ def _load_pipeline(
             requires_safety_checker=False,
             **common,
         )
-        pipeline.scheduler = DPMSolverMultistepScheduler.from_config(pipeline.scheduler.config)
+        pipeline.scheduler = DPMSolverMultistepScheduler.from_config(
+            pipeline.scheduler.config,
+            **dict(model["scheduler_parameters"]),
+        )
         pipeline.set_progress_bar_config(disable=True)
         return pipeline.to(device)
     if adapter == "kandinsky22":
@@ -343,6 +346,7 @@ def generate_e02b_shard(
                 "vae_hash": vae_hash,
                 "sampler": model["sampler"],
                 "scheduler": model["scheduler"],
+                "scheduler_parameters": dict(model.get("scheduler_parameters", {})),
                 "steps": int(model["steps"]),
                 "guidance_scale": float(model["guidance_scale"]),
                 "generation_code_commit": state.commit,

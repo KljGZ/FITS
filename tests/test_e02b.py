@@ -79,6 +79,13 @@ def test_model_snapshot_policy_avoids_duplicate_weight_formats() -> None:
     assert not any(pattern.endswith(".bin") for pattern in sd_patterns)
     assert "**/*.bin" in tiny_patterns
     assert not any(pattern.endswith(".safetensors") for pattern in tiny_patterns)
+    for model in config["models"].values():
+        if model["adapter"] == "stable_diffusion":
+            assert model["scheduler_parameters"] == {
+                "algorithm_type": "dpmsolver++",
+                "solver_order": 2,
+                "final_sigmas_type": "zero",
+            }
 
 
 def test_pro_audit_traceability_is_exactly_one_to_one() -> None:

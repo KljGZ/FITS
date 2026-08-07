@@ -1,6 +1,6 @@
 phase: E02b
 status: pre_registered
-pre_registered_at_utc: "2026-08-07T12:25:52Z"
+pre_registered_at_utc: "2026-08-07T12:34:21Z"
 claim: controlled generator-source fingerprint confirmation; not G-FITS calibration
 
 governance:
@@ -107,6 +107,10 @@ models:
     vae: integrated
     vae_hash: revision_inventory_component_sha256
     scheduler: DPMSolverMultistepScheduler
+    scheduler_parameters: &dpm_solver_parameters
+      algorithm_type: dpmsolver++
+      solver_order: 2
+      final_sigmas_type: zero
     sampler: dpm_solver_multistep
     steps: 20
     guidance_scale: 7.5
@@ -125,6 +129,7 @@ models:
     vae: integrated
     vae_hash: revision_inventory_component_sha256
     scheduler: DPMSolverMultistepScheduler
+    scheduler_parameters: *dpm_solver_parameters
     sampler: dpm_solver_multistep
     steps: 20
     guidance_scale: 7.5
@@ -142,6 +147,7 @@ models:
     vae: integrated
     vae_hash: revision_inventory_component_sha256
     scheduler: DPMSolverMultistepScheduler
+    scheduler_parameters: *dpm_solver_parameters
     sampler: dpm_solver_multistep
     steps: 20
     guidance_scale: 7.5
@@ -159,6 +165,7 @@ models:
     vae: integrated
     vae_hash: revision_inventory_component_sha256
     scheduler: DPMSolverMultistepScheduler
+    scheduler_parameters: *dpm_solver_parameters
     sampler: dpm_solver_multistep
     steps: 20
     guidance_scale: 7.5
@@ -177,6 +184,7 @@ models:
     vae: integrated
     vae_hash: revision_inventory_component_sha256
     scheduler: DPMSolverMultistepScheduler
+    scheduler_parameters: *dpm_solver_parameters
     sampler: dpm_solver_multistep
     steps: 20
     guidance_scale: 7.5
