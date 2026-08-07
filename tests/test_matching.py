@@ -3,6 +3,15 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
+from gfits.explicit_scoring import (
+    fit_nuisance_subspace,
+    gallery_complement_ratio,
+    median_control_ratio,
+    nuisance_subspace_residual_score,
+    paper_fits_plus_c,
+    paper_fits_ratio,
+    robust_zscore,
+)
 from gfits.matching import (
     DegenerateStatisticError,
     aligned_peak_position,
@@ -79,6 +88,13 @@ def test_prnu_compatibility_pce_uses_zero_filled_half_open_slice() -> None:
 def test_fits_family_uses_explicit_control_definition() -> None:
     controls = np.asarray([1.5, 2.0, 10.0])
 
+    assert paper_fits_ratio(4.0, 2.0) == pytest.approx(2.0)
+    assert paper_fits_plus_c(4.0, 2.0, constant=1.0) == pytest.approx(5.0 / 3.0)
+    assert median_control_ratio(4.0, controls) == pytest.approx(2.0)
+    assert gallery_complement_ratio(4.0, controls, reducer="mean") == pytest.approx(4.0 / 4.5)
+    assert gallery_complement_ratio(4.0, controls, reducer="median") == pytest.approx(2.0)
+
+    # Historical aliases remain reproducible for the frozen E00--E02 artifacts.
     assert fits(4.0, 2.0) == pytest.approx(2.0)
     assert fits_plus(4.0, controls) == pytest.approx(2.0)
     assert log_ratio(4.0, 2.0) == pytest.approx(np.log(2.0))
@@ -89,6 +105,17 @@ def test_degenerate_statistics_fail_closed() -> None:
     with pytest.raises(DegenerateStatisticError):
         normalized_cross_correlation(np.ones((3, 3)), np.ones((3, 3)))
     with pytest.raises(DegenerateStatisticError):
-        fits(1.0, 0.0)
+        paper_fits_ratio(1.0, 0.0)
+    with pytest.raises(DegenerateStatisticError):
+        paper_fits_plus_c(1.0, 0.0, constant=0.0)
     with pytest.raises(DegenerateStatisticError):
         log_ratio(-1.0, 2.0)
+
+
+def test_robust_and_subspace_controls_are_explicit() -> None:
+    assert robust_zscore(7.0, np.asarray([1.0, 2.0, 3.0])) > 0.0
+    controls = np.asarray([[1.0, 0.0, 2.0], [2.0, 0.0, 1.0], [3.0, 0.0, 0.0], [4.0, 0.0, -1.0]])
+    center, basis = fit_nuisance_subspace(controls, rank=1)
+    assert basis.shape == (1, 3)
+    score = nuisance_subspace_residual_score(np.asarray([2.0, 5.0, 1.0]), center, basis)
+    assert score == pytest.approx(25.0)

@@ -1,0 +1,341 @@
+phase: E02b
+status: pre_registered
+pre_registered_at_utc: "2026-08-07T11:56:49Z"
+claim: controlled generator-source fingerprint confirmation; not G-FITS calibration
+
+governance:
+  require_committed_clean_tree: true
+  frozen_e02_test_scores_are_audit_only: true
+  method_selection_split: calibration
+  confirmatory_split: test
+  stage_order: [E02b, E03, E04, E05]
+  code_hash_paths:
+    - configs/e02b.yaml
+    - src/gfits/e02.py
+    - src/gfits/e02b.py
+    - src/gfits/e02b_data.py
+    - src/gfits/e02b_features.py
+    - src/gfits/e02b_generation.py
+    - src/gfits/e02b_statistics.py
+    - src/gfits/explicit_scoring.py
+    - src/gfits/controls.py
+    - src/gfits/cli.py
+    - src/gfits/matching.py
+    - src/gfits/manifest.py
+    - environment-e02b.yml
+    - pyproject.toml
+    - reports/e02b/PRO_AUDIT_TRACEABILITY.md
+
+design:
+  prompt_count: 200
+  prompt_template: "a detailed photograph of {subject} {scene}, natural light, realistic texture"
+  subjects:
+    - a red bicycle
+    - a wooden sailboat
+    - a glass teapot
+    - a mountain cabin
+    - a yellow school bus
+    - a ceramic vase
+    - a tabby cat
+    - a stone bridge
+    - a green tractor
+    - a bowl of oranges
+    - an old typewriter
+    - a blue umbrella
+    - a lighthouse
+    - a pair of hiking boots
+    - a city tram
+    - a violin
+    - a sunflower field
+    - a silver wristwatch
+    - a bakery storefront
+    - a red fox
+  scenes:
+    - beside a quiet lake
+    - on a busy city street
+    - inside a sunlit studio
+    - beneath an overcast sky
+    - at the edge of a forest
+    - on a marble table
+    - during golden hour
+    - in a snowy landscape
+    - near a brick wall
+    - in a public market
+  negative_prompt: "text, watermark, logo, signature, low quality"
+  prompt_split_counts:
+    template: 100
+    calibration: 40
+    test: 60
+  split_rank_seed: 2026080701
+  seeds:
+    template: [11235813, 27182818]
+    calibration: [31415926]
+    test: [16180339]
+  generate_complete_prompt_seed_factorial: true
+  resolutions: [256, 512, 768, 1024]
+  writer:
+    id: canonical_png_v1
+    library: Pillow
+    version: 11.0.0
+    color_space: RGB
+    tensor_layout: HWC
+    tensor_range: closed_0_1
+    tensor_dtype: float32
+    quantization: clip_0_1_then_rint_x255_to_uint8
+    png_compress_level: 6
+    png_optimize: false
+
+model_groups:
+  cross_family:
+    purpose: family-level controlled signal
+    models: [sd14, tiny_sd, kandinsky22, pixart_sigma]
+  near_family:
+    purpose: checkpoint-level controlled signal
+    models: [sd14, sd15, openjourney_v4, dreamshaper8]
+
+models:
+  sd14:
+    family: latent_diffusion
+    base_model: CompVis/stable-diffusion-v1-4
+    adapter: stable_diffusion
+    repositories:
+      - repo_id: CompVis/stable-diffusion-v1-4
+        revision: 133a221b8aa7292a167afc5127cb63fb5005638b
+    checkpoint_hash: revision_inventory_sha256
+    vae: integrated
+    vae_hash: revision_inventory_component_sha256
+    scheduler: DPMSolverMultistepScheduler
+    sampler: dpm_solver_multistep
+    steps: 20
+    guidance_scale: 7.5
+    compute_dtype: float16
+    safety_filter: disabled_for_controlled_non_sensitive_prompts
+  sd15:
+    family: latent_diffusion
+    base_model: stable-diffusion-v1-5/stable-diffusion-v1-5
+    adapter: stable_diffusion
+    repositories:
+      - repo_id: stable-diffusion-v1-5/stable-diffusion-v1-5
+        revision: 451f4fe16113bff5a5d2269ed5ad43b00592e9a14
+    checkpoint_hash: revision_inventory_sha256
+    vae: integrated
+    vae_hash: revision_inventory_component_sha256
+    scheduler: DPMSolverMultistepScheduler
+    sampler: dpm_solver_multistep
+    steps: 20
+    guidance_scale: 7.5
+    compute_dtype: float16
+    safety_filter: disabled_for_controlled_non_sensitive_prompts
+  tiny_sd:
+    family: distilled_latent_diffusion
+    base_model: segmind/tiny-sd
+    adapter: stable_diffusion
+    repositories:
+      - repo_id: segmind/tiny-sd
+        revision: cad0bd7495fa6c4bcca01b19a723dc91627fe84f
+    checkpoint_hash: revision_inventory_sha256
+    vae: integrated
+    vae_hash: revision_inventory_component_sha256
+    scheduler: DPMSolverMultistepScheduler
+    sampler: dpm_solver_multistep
+    steps: 20
+    guidance_scale: 7.5
+    compute_dtype: float16
+    safety_filter: disabled_for_controlled_non_sensitive_prompts
+  openjourney_v4:
+    family: latent_diffusion_sd15_checkpoint
+    base_model: runwayml/stable-diffusion-v1-5
+    adapter: stable_diffusion
+    repositories:
+      - repo_id: prompthero/openjourney-v4
+        revision: b195ed2d503f3eb29637050a886d77bd81d35f0e
+    checkpoint_hash: revision_inventory_sha256
+    vae: integrated
+    vae_hash: revision_inventory_component_sha256
+    scheduler: DPMSolverMultistepScheduler
+    sampler: dpm_solver_multistep
+    steps: 20
+    guidance_scale: 7.5
+    compute_dtype: float16
+    safety_filter: disabled_for_controlled_non_sensitive_prompts
+  dreamshaper8:
+    family: latent_diffusion_sd15_checkpoint
+    base_model: runwayml/stable-diffusion-v1-5
+    adapter: stable_diffusion
+    repositories:
+      - repo_id: Lykon/dreamshaper-8
+        revision: a7e52b98680b1ba8ff7bce97c7f9f2e2e5337917
+    checkpoint_hash: revision_inventory_sha256
+    vae: integrated
+    vae_hash: revision_inventory_component_sha256
+    scheduler: DPMSolverMultistepScheduler
+    sampler: dpm_solver_multistep
+    steps: 20
+    guidance_scale: 7.5
+    compute_dtype: float16
+    safety_filter: disabled_for_controlled_non_sensitive_prompts
+  kandinsky22:
+    family: unclip_latent_diffusion
+    base_model: kandinsky-community/kandinsky-2-2
+    adapter: kandinsky22
+    repositories:
+      - repo_id: kandinsky-community/kandinsky-2-2-prior
+        revision: 9fc51ad5732afc5d031724219d22e6c421799c5a8
+      - repo_id: kandinsky-community/kandinsky-2-2-decoder
+        revision: 9ae140d347fed8ce6e8bb3005dcc1f485443bb8e3
+    checkpoint_hash: combined_revision_inventory_sha256
+    vae: movq_integrated_decoder
+    vae_hash: revision_inventory_component_sha256
+    scheduler: native_unclip_scheduler
+    sampler: native
+    steps: 20
+    prior_steps: 20
+    guidance_scale: 4.0
+    prior_guidance_scale: 4.0
+    compute_dtype: float16
+    safety_filter: disabled_for_controlled_non_sensitive_prompts
+  pixart_sigma:
+    family: diffusion_transformer
+    base_model: PixArt-alpha/PixArt-Sigma-XL-2-1024-MS
+    adapter: pixart_sigma
+    repositories:
+      - repo_id: PixArt-alpha/PixArt-Sigma-XL-2-1024-MS
+        revision: e102b3591cc82e97071b8b4cb90d834d0c4877207
+    checkpoint_hash: revision_inventory_sha256
+    vae: integrated
+    vae_hash: revision_inventory_component_sha256
+    scheduler: native_dpm_solver
+    sampler: native
+    steps: 20
+    guidance_scale: 4.5
+    compute_dtype: float16
+    safety_filter: not_present
+
+residuals:
+  wavelet:
+    implementation: polimi-ispl/prnu-python
+    commit: 91e1585a39287e26f9e770b71cf9124c35d9248d
+    functions_sha256: 9c26c0c854283145218950c7a63f04ef894b7c1b735bb18249ac42d74408b45f
+    levels: 4
+    sigma: 5.0
+  fixed_three_kernel_high_pass_residual_bank:
+    implementation: gfits_fixed_three_kernel_high_pass_v2
+    boundary: reflect
+  low_bit:
+    bit_count: 2
+  noiseprint:
+    commit: c06034eedc9235b642a4da9ea8ef25901d6add93
+    model: net_jpg101
+    quality_factor: 101
+    checkpoint_sha256:
+      model.data-00000-of-00001: e5b813ac87b2972991766c8a10195f464ed276593eaaf157a1bd297228ba70d6
+      model.index: d28b09038156b15ed438bae3242df33c4e75b21bb79a93024a4923b7f467a77a
+      model.meta: 940467a4384c0fe916829f80d83816eead5b8b951d26e06b07f54f2d8b3943d5
+
+spatial_branch:
+  extractors:
+    [wavelet, fixed_three_kernel_high_pass_residual_bank, low_bit, noiseprint]
+  aggregators:
+    additive: [mean, median, trimmed_mean_10, standardized_mean, spectral_whitened_mean]
+    multiplicative_wavelet_only: [prnu_mle]
+    non_wavelet_weighted_name: intensity_weighted
+  template_sizes: [1, 3, 5, 10, 20, 50]
+  scorers: [raw_signed_ncc_global, raw_signed_ncc_channel_mean, raw_signed_ncc_whitened]
+  secondary_scorers: [raw_signed_energy, raw_pce]
+  components: [full, common, source_delta]
+  native_cross_resolution_patch:
+    size: 256
+    positions: [center]
+
+statistical_signature_branch:
+  base_residual: fixed_three_kernel_high_pass_residual_bank
+  signatures:
+    - power_spectrum_2d
+    - phase_spectrum
+    - radial_power_spectrum
+    - autocorrelation
+    - cepstrum
+    - srm_style_cooccurrence
+    - patch_gram_covariance
+    - low_high_frequency_partition
+  aggregators: [mean, median]
+  template_sizes: [1, 3, 5, 10, 20, 50]
+  scorer: signed_ncc
+  normalized_signature_grid_size: 128
+
+multiplicative_diagnostics:
+  split: calibration
+  intensity_bins: 16
+  tests: [binned_variance, linear_regression, breusch_pagan]
+  modulation_requires_all:
+    slope_positive: true
+    regression_p_below: 0.05
+    breusch_pagan_p_below: 0.05
+
+counterfactuals:
+  canonical_uniform_export: {kind: canonical_requantize}
+  random_lsb_pm1: {kind: lsb_jitter, seed: 2026080702}
+  bit_depth_6: {kind: bit_depth, bits: 6}
+  png_reencode_level_9: {kind: png_reencode, compress_level: 9, optimize: false}
+
+statistics:
+  primary_split: test
+  calibration_split: calibration
+  bootstrap:
+    kind: two_way_template_image_and_query_prompt_group
+    draws: 1000
+    confidence: 0.95
+    seed: 2026080703
+  permutations:
+    prompt_block_source_label: {draws: 10000, seed: 2026080704}
+    template_source_label: {draws: 10000, seed: 2026080705}
+    hierarchical_family_prompt: {draws: 10000, seed: 2026080706}
+    auxiliary_sign_flip: {draws: 10000, seed: 2026080707}
+  multiple_testing: holm_fwer_within_pre_registered_suite_branch_families
+  alpha: 0.05
+  confirmatory_selection:
+    split: calibration
+    primary_resolution: 512
+    template_size: 50
+    eligible_components: [full, source_delta]
+    criterion: maximum_macro_source_auroc
+    tie_break: lexicographic_condition_id
+  resolution_profile:
+    split: calibration_then_test
+    resolutions: [256, 512, 768, 1024]
+    aggregator: median
+    spatial_scorers: [raw_signed_ncc_global, raw_signed_ncc_channel_mean]
+    statistical_scorer: signed_ncc
+    components: [full, source_delta]
+    gate_effect: none_descriptive_secondary_analysis
+  metrics:
+    - pooled_pairwise_auroc
+    - macro_source_auroc
+    - per_source_auroc
+    - rank1
+    - rank5
+    - mean_average_precision
+    - mean_reciprocal_rank
+    - confusion_matrix
+    - candidate_template_bias
+    - template_number_curve
+
+e02b_gate:
+  require_cross_family_suite: true
+  require_near_family_suite: true
+  macro_source_auroc_bootstrap_lower_above: 0.5
+  rank1_above_random_permutation_p_below: 0.05
+  require_no_single_source_dominance: true
+  require_stable_template_size_improvement: true
+  require_low_bit_signal_after_uniform_export: true
+  pass_requires_all_six: true
+  decision_pass: proceed_to_e03_configuration_and_hierarchy_analysis
+  decision_fail: stop_or_restrict_fixed_generator_fingerprint_mainline
+
+claim_boundaries:
+  forbidden_before_e02b_pass:
+    - universal_generator_fingerprint_validated
+    - different_generator_fingerprints_are_independent
+    - gfits_validated
+    - aigc_software_noise_removed
+    - universal_aigc_detection_implemented

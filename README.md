@@ -192,6 +192,63 @@ Both public releases also omit per-image seed identity, so the confirmatory gate
 failed and the registered decision is
 `stop_confirmatory_claim_and_require_controlled_seed_provenance`.
 
+## E02b controlled confirmation
+
+E02b is the confirmatory replacement for the exploratory E02 screen. It is a
+fully controlled Generator x Prompt x Seed x Resolution experiment with exact
+model revisions, shared prompts, split-disjoint seeds, native geometry, and one
+tensor-to-PNG writer. The full registered design contains 22,400 images across
+cross-family and near-family suites. Configuration, code, and a clean Git
+commit must be frozen before generation starts.
+
+```bash
+conda env create -f environment-e02b.yml
+conda activate fits-e02b
+pip install -e .
+
+HF_ENDPOINT=https://hf-mirror.com python -m gfits.cli generate-e02b-shard \
+  --config configs/e02b.yaml \
+  --repository-root . \
+  --data-root /mnt/data/jkl/FITS/datasets/e02b \
+  --cache-root /mnt/data/jkl/FITS/checkpoints/huggingface \
+  --fragment /mnt/data/jkl/FITS/manifests/e02b/fragments/sd14-512.json \
+  --model-id sd14 --resolution 512 --device cuda:0 --batch-size 1
+
+python -m gfits.cli merge-e02b-generation \
+  --config configs/e02b.yaml --repository-root . \
+  --data-root /mnt/data/jkl/FITS/datasets/e02b \
+  --fragment-root /mnt/data/jkl/FITS/manifests/e02b/fragments \
+  --output /mnt/data/jkl/FITS/manifests/e02b/generation.json
+
+python -m gfits.cli apply-e02b-counterfactuals \
+  --config configs/e02b.yaml --repository-root . \
+  --generation-manifest /mnt/data/jkl/FITS/manifests/e02b/generation.json \
+  --data-root /mnt/data/jkl/FITS/datasets/e02b \
+  --derivative-root /mnt/data/jkl/FITS/datasets/e02b-counterfactuals \
+  --output /mnt/data/jkl/FITS/manifests/e02b/counterfactuals.json
+```
+
+Representation extraction is sharded by extractor and condition, then merged
+before scoring. Use `python -m gfits.cli <command> --help` for the arguments to
+`extract-e02b-representations`, `merge-e02b-representations`, `score-e02b`,
+`select-e02b-condition`, `evaluate-e02b`, and `generate-e02b-report`.
+
+The score API is deliberately explicit: `paper_fits_ratio` and
+`paper_fits_plus_c` mean the paper statistics; `median_control_ratio` is a
+project extension; `gallery_complement_ratio` is only a relative closed-gallery
+score and is never presented as nuisance calibration. Candidate-independent
+software controls are represented by `NuisanceControlBank` and require at least
+three donors disjoint from candidates and queries. `robust_zscore` and the
+fit/apply nuisance-subspace API likewise accept only explicit independent
+control inputs.
+
+The E02b Gate requires both source suites, a two-way-bootstrap lower confidence
+bound above chance, significant Rank-1 attribution, source breadth, stable
+improvement with template count, and survival after the unified low-bit export
+control. E03, E04, and E05 remain claim-gated until their registered
+prerequisites pass; a failed E02b Gate stops or restricts the fixed-generator
+fingerprint mainline instead of being bypassed.
+
 ## Repository layout
 
 ```text
@@ -207,6 +264,8 @@ reports/e01/           E01 protocol, results, evidence, and limitations
 artifacts/e01/         E01 manifest, raw scores, metrics, figures, and QA
 reports/e02/           E02 signal-screen result and metadata boundary
 artifacts/e02/         E02 manifests, scores, statistics, figures, and QA
+reports/e02b/          E02b controlled report and 73-item audit traceability
+artifacts/e02b/        E02b manifests, raw tables, statistics, and QA
 ```
 
 The Phase 0 source audit is in

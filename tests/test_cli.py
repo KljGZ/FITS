@@ -3,7 +3,27 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from gfits.cli import main
+from gfits.cli import _parser, main
+
+
+def test_e02b_command_contract_is_exposed() -> None:
+    parser = _parser()
+    subparsers = next(
+        action
+        for action in parser._actions
+        if action.dest == "command"  # noqa: SLF001
+    )
+    assert {
+        "generate-e02b-shard",
+        "merge-e02b-generation",
+        "apply-e02b-counterfactuals",
+        "extract-e02b-representations",
+        "merge-e02b-representations",
+        "score-e02b",
+        "select-e02b-condition",
+        "evaluate-e02b",
+        "generate-e02b-report",
+    }.issubset(subparsers.choices)
 
 
 def test_cli_build_and_verify(tmp_path: Path, capsys: object) -> None:

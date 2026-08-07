@@ -7,3 +7,7 @@
 /artifacts/e02/**/*.csv -diff
 /artifacts/e02/pytest-junit.xml -diff
 /reports/e02/E02_REPORT.md -text
+/artifacts/e02b/** -text -whitespace
+/artifacts/e02b/**/*.csv -diff
+/artifacts/e02b/pytest-junit.xml -diff
+/reports/e02b/*.md -text

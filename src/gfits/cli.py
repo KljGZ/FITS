@@ -18,6 +18,16 @@ from gfits.e02 import (
     score_e02_pairs,
 )
 from gfits.e02_data import prepare_e02_data
+from gfits.e02b import (
+    apply_e02b_counterfactuals,
+    evaluate_e02b,
+    extract_e02b_representations,
+    generate_e02b_report,
+    merge_e02b_representation_fragments,
+    score_e02b_matrix,
+    select_e02b_conditions,
+)
+from gfits.e02b_generation import generate_e02b_shard, merge_e02b_fragments
 from gfits.manifest import ManifestError, build_manifest, verify_manifest
 from gfits.prnu_validation import validate_prnu
 from gfits.synthetic import validate_synthetic_fits
@@ -26,7 +36,7 @@ from gfits.synthetic import validate_synthetic_fits
 def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="gfits",
-        description="G-FITS reproducible research utilities (Phase 0 through E02)",
+        description="G-FITS reproducible research utilities (Phase 0 through E02b)",
     )
     parser.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
     commands = parser.add_subparsers(dest="command", required=True)
@@ -159,6 +169,134 @@ def _parser() -> argparse.ArgumentParser:
     report.add_argument("--summary", type=Path, required=True)
     report.add_argument("--evaluation", type=Path, required=True)
     report.add_argument("--report", type=Path, required=True)
+
+    generate_e02b = commands.add_parser(
+        "generate-e02b-shard",
+        help="generate one committed, revision-locked E02b model/resolution shard",
+    )
+    generate_e02b.add_argument("--config", type=Path, required=True)
+    generate_e02b.add_argument("--repository-root", type=Path, required=True)
+    generate_e02b.add_argument("--data-root", type=Path, required=True)
+    generate_e02b.add_argument("--cache-root", type=Path, required=True)
+    generate_e02b.add_argument("--fragment", type=Path, required=True)
+    generate_e02b.add_argument("--model-id", required=True)
+    generate_e02b.add_argument("--resolution", type=int, required=True)
+    generate_e02b.add_argument("--device", default="cuda:0")
+    generate_e02b.add_argument("--batch-size", type=int, default=1)
+
+    merge_generation = commands.add_parser(
+        "merge-e02b-generation",
+        help="merge and verify all E02b generation fragments",
+    )
+    merge_generation.add_argument("--config", type=Path, required=True)
+    merge_generation.add_argument("--repository-root", type=Path, required=True)
+    merge_generation.add_argument("--data-root", type=Path, required=True)
+    merge_generation.add_argument("--fragment-root", type=Path, required=True)
+    merge_generation.add_argument("--output", type=Path, required=True)
+
+    counterfactuals = commands.add_parser(
+        "apply-e02b-counterfactuals",
+        help="create the registered E02b exporter and low-bit counterfactuals",
+    )
+    counterfactuals.add_argument("--config", type=Path, required=True)
+    counterfactuals.add_argument("--repository-root", type=Path, required=True)
+    counterfactuals.add_argument("--generation-manifest", type=Path, required=True)
+    counterfactuals.add_argument("--data-root", type=Path, required=True)
+    counterfactuals.add_argument("--derivative-root", type=Path, required=True)
+    counterfactuals.add_argument("--output", type=Path, required=True)
+
+    extract_e02b = commands.add_parser(
+        "extract-e02b-representations",
+        help="extract one E02b residual plus its registered statistical signatures",
+    )
+    extract_e02b.add_argument("--config", type=Path, required=True)
+    extract_e02b.add_argument("--repository-root", type=Path, required=True)
+    extract_e02b.add_argument("--generation-manifest", type=Path, required=True)
+    extract_e02b.add_argument("--data-root", type=Path, required=True)
+    extract_e02b.add_argument("--cache-root", type=Path, required=True)
+    extract_e02b.add_argument("--fragment", type=Path, required=True)
+    extract_e02b.add_argument("--upstream-root", type=Path, required=True)
+    extract_e02b.add_argument(
+        "--extractor",
+        required=True,
+        choices=(
+            "wavelet",
+            "fixed_three_kernel_high_pass_residual_bank",
+            "low_bit",
+            "noiseprint",
+        ),
+    )
+    extract_e02b.add_argument("--condition", default="native")
+    extract_e02b.add_argument("--derivative-manifest", type=Path)
+    extract_e02b.add_argument("--derivative-root", type=Path)
+    extract_e02b.add_argument("--noiseprint-root", type=Path)
+
+    merge_representations = commands.add_parser(
+        "merge-e02b-representations",
+        help="merge and hash-verify E02b representation fragments",
+    )
+    merge_representations.add_argument("--config", type=Path, required=True)
+    merge_representations.add_argument("--repository-root", type=Path, required=True)
+    merge_representations.add_argument("--fragment-root", type=Path, required=True)
+    merge_representations.add_argument("--cache-root", type=Path, required=True)
+    merge_representations.add_argument("--output", type=Path, required=True)
+
+    score_e02b = commands.add_parser(
+        "score-e02b",
+        help="score the E02b calibration/test matrix with explicit scorer semantics",
+    )
+    score_e02b.add_argument("--config", type=Path, required=True)
+    score_e02b.add_argument("--repository-root", type=Path, required=True)
+    score_e02b.add_argument("--generation-manifest", type=Path, required=True)
+    score_e02b.add_argument("--data-root", type=Path, required=True)
+    score_e02b.add_argument("--representation-manifest", type=Path, required=True)
+    score_e02b.add_argument("--cache-root", type=Path, required=True)
+    score_e02b.add_argument("--scores", type=Path, required=True)
+    score_e02b.add_argument("--common-scores", type=Path, required=True)
+    score_e02b.add_argument("--calibration", type=Path, required=True)
+    score_e02b.add_argument("--condition", default="native")
+    score_e02b.add_argument("--derivative-manifest", type=Path)
+    score_e02b.add_argument("--derivative-root", type=Path)
+    score_e02b.add_argument(
+        "--profile",
+        choices=("matrix", "counterfactual", "resolution"),
+        default="matrix",
+    )
+
+    select_e02b = commands.add_parser(
+        "select-e02b-condition",
+        help="select E02b conditions from calibration rows without reading test scores",
+    )
+    select_e02b.add_argument("--config", type=Path, required=True)
+    select_e02b.add_argument("--scores", type=Path, required=True)
+    select_e02b.add_argument("--output", type=Path, required=True)
+
+    evaluate_e02b_parser = commands.add_parser(
+        "evaluate-e02b",
+        help="run E02b test inference, two-way bootstrap, permutations, and Gate",
+    )
+    evaluate_e02b_parser.add_argument("--config", type=Path, required=True)
+    evaluate_e02b_parser.add_argument("--repository-root", type=Path, required=True)
+    evaluate_e02b_parser.add_argument("--generation-manifest", type=Path, required=True)
+    evaluate_e02b_parser.add_argument("--data-root", type=Path, required=True)
+    evaluate_e02b_parser.add_argument("--representation-manifest", type=Path, required=True)
+    evaluate_e02b_parser.add_argument("--cache-root", type=Path, required=True)
+    evaluate_e02b_parser.add_argument("--scores", type=Path, required=True)
+    evaluate_e02b_parser.add_argument("--selection", type=Path, required=True)
+    evaluate_e02b_parser.add_argument("--output-dir", type=Path, required=True)
+    evaluate_e02b_parser.add_argument("--condition", default="native")
+    evaluate_e02b_parser.add_argument("--derivative-manifest", type=Path)
+    evaluate_e02b_parser.add_argument("--derivative-root", type=Path)
+    evaluate_e02b_parser.add_argument("--resolution-scores", type=Path)
+    evaluate_e02b_parser.add_argument("--counterfactual-scores", type=Path, action="append")
+
+    report_e02b = commands.add_parser(
+        "generate-e02b-report",
+        help="render the E02b report and 73-item traceability matrix",
+    )
+    report_e02b.add_argument("--config", type=Path, required=True)
+    report_e02b.add_argument("--summary", type=Path, required=True)
+    report_e02b.add_argument("--output-dir", type=Path, required=True)
     return parser
 
 
@@ -247,13 +385,110 @@ def main(argv: Sequence[str] | None = None) -> int:
                 arguments.scores,
                 arguments.output_dir,
             )
-        else:
+        elif arguments.command == "generate-report":
             result = generate_e02_report(
                 arguments.config,
                 arguments.manifest,
                 arguments.summary,
                 arguments.evaluation,
                 arguments.report,
+            )
+        elif arguments.command == "generate-e02b-shard":
+            result = generate_e02b_shard(
+                arguments.config,
+                arguments.repository_root,
+                arguments.data_root,
+                arguments.cache_root,
+                arguments.fragment,
+                model_id=arguments.model_id,
+                resolution=arguments.resolution,
+                device=arguments.device,
+                batch_size=arguments.batch_size,
+            )
+        elif arguments.command == "merge-e02b-generation":
+            result = merge_e02b_fragments(
+                arguments.config,
+                arguments.repository_root,
+                arguments.data_root,
+                arguments.fragment_root,
+                arguments.output,
+            )
+        elif arguments.command == "apply-e02b-counterfactuals":
+            result = apply_e02b_counterfactuals(
+                arguments.config,
+                arguments.repository_root,
+                arguments.generation_manifest,
+                arguments.data_root,
+                arguments.derivative_root,
+                arguments.output,
+            )
+        elif arguments.command == "extract-e02b-representations":
+            result = extract_e02b_representations(
+                arguments.config,
+                arguments.repository_root,
+                arguments.generation_manifest,
+                arguments.data_root,
+                arguments.cache_root,
+                arguments.fragment,
+                arguments.upstream_root,
+                extractor=arguments.extractor,
+                condition=arguments.condition,
+                derivative_manifest_path=arguments.derivative_manifest,
+                derivative_root=arguments.derivative_root,
+                noiseprint_root=arguments.noiseprint_root,
+            )
+        elif arguments.command == "merge-e02b-representations":
+            result = merge_e02b_representation_fragments(
+                arguments.config,
+                arguments.repository_root,
+                arguments.fragment_root,
+                arguments.cache_root,
+                arguments.output,
+            )
+        elif arguments.command == "score-e02b":
+            result = score_e02b_matrix(
+                arguments.config,
+                arguments.repository_root,
+                arguments.generation_manifest,
+                arguments.data_root,
+                arguments.representation_manifest,
+                arguments.cache_root,
+                arguments.scores,
+                arguments.common_scores,
+                arguments.calibration,
+                condition=arguments.condition,
+                derivative_manifest_path=arguments.derivative_manifest,
+                derivative_root=arguments.derivative_root,
+                profile=arguments.profile,
+            )
+        elif arguments.command == "select-e02b-condition":
+            result = select_e02b_conditions(
+                arguments.config,
+                arguments.scores,
+                arguments.output,
+            )
+        elif arguments.command == "evaluate-e02b":
+            result = evaluate_e02b(
+                arguments.config,
+                arguments.repository_root,
+                arguments.generation_manifest,
+                arguments.data_root,
+                arguments.representation_manifest,
+                arguments.cache_root,
+                arguments.scores,
+                arguments.selection,
+                arguments.output_dir,
+                condition=arguments.condition,
+                derivative_manifest_path=arguments.derivative_manifest,
+                derivative_root=arguments.derivative_root,
+                resolution_score_path=arguments.resolution_scores,
+                counterfactual_score_paths=arguments.counterfactual_scores,
+            )
+        else:
+            result = generate_e02b_report(
+                arguments.config,
+                arguments.summary,
+                arguments.output_dir,
             )
         print(json.dumps(result, ensure_ascii=False, indent=2))
         succeeded = bool(result.get("ok", result.get("passed", False)))
